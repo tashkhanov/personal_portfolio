@@ -54,6 +54,7 @@ class SiteSettings(models.Model):
     telegram_chat_id = models.CharField('Telegram Chat ID', max_length=50, blank=True, help_text='Куда отправлять сообщения')
     email = models.EmailField('Email', default='hello@khan.dev')
     github_url = models.URLField('GitHub', default='https://github.com/', blank=True)
+    og_image = models.ImageField('Превью для соцсетей (OG Image)', upload_to='settings/', blank=True, null=True, help_text='Картинка 1200x630 (Telegram, VK)')
     resume = models.FileField('Резюме', upload_to='resume/', blank=True, null=True, help_text='PDF файл резюме для скачивания с главной страницы')
     portrait = models.ImageField('Портрет', upload_to='about/', blank=True, null=True, help_text='Фото для страницы "Обо мне"')
     about_full_text = models.TextField('Развернутый текст обо мне', default='Тут будет подробная история моего пути...', help_text='Поддерживает HTML-теги для форматирования')
