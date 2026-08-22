@@ -15,7 +15,7 @@ class ServiceFeatureInline(admin.TabularInline):
 @admin.register(SiteSettings)
 class SiteSettingsAdmin(admin.ModelAdmin):
     fieldsets = (
-        ('Основное', {'fields': ('name', 'title', 'subtitle', 'is_available', 'hero_text', 'about_text', 'resume', 'portrait', 'about_full_text')}),
+        ('Основное', {'fields': ('name', 'title', 'subtitle', 'is_available', 'hero_text', 'about_text', 'resume', 'portrait', 'og_image', 'about_full_text')}),
         ('Контакты', {'fields': ('kwork_username', 'kwork_url', 'telegram_username', 'telegram_url', 'email', 'github_url')}),
         ('Telegram интеграция', {'fields': ('telegram_bot_token', 'telegram_chat_id'), 'description': 'Для получения сообщений с формы обратной связи'}),
     )
