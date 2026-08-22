@@ -1,6 +1,8 @@
 # 🚀 Personal Fullstack Portfolio
 
-![Portfolio Preview](<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/98bf128f-1bdc-45aa-9339-5b843a7ff2dc" />)
+<img width="1920" height="1080" alt="Снимок экрана (342)" src="https://github.com/user-attachments/assets/ced36680-8787-4e67-a243-c1aea5d720ce" />
+
+
 
 Современное, высокопроизводительное SPA-портфолио, разработанное с нуля. Этот проект демонстрирует мои навыки как Fullstack-разработчика, объединяя надежный бэкенд на **Django** с динамичным, премиальным фронтендом на **Vanilla JS**.
 
@@ -26,38 +28,44 @@
 Для запуска проекта на локальной машине выполните следующие шаги:
 
 1. **Клонируйте репозиторий:**
-   \\ash
+   ```bash
    git clone https://github.com/твое-имя/personal-portfolio.git
    cd personal-portfolio
-   \
+   ```
+
 2. **Создайте и активируйте виртуальное окружение:**
-   \\ash
+   ```bash
    python -m venv venv
    # Для Windows:
-   venv\\Scripts\\activate
+   venv\Scripts\activate
    # Для Mac/Linux:
    source venv/bin/activate
-   \
+   ```
+
 3. **Установите зависимости:**
-   \\ash
+   ```bash
    pip install -r requirements.txt
-   \
+   ```
+
 4. **Примените миграции базы данных:**
-   \\ash
+   ```bash
    python manage.py migrate
-   \
+   ```
+
 5. **Создайте суперпользователя (для доступа к админке):**
-   \\ash
+   ```bash
    python manage.py createsuperuser
-   \
+   ```
+
 6. **Запустите сервер разработки:**
-   \\ash
+   ```bash
    python manage.py runserver
-   \
-🌐 Проект будет доступен по адресу: \http://127.0.0.1:8000/\  
-🔐 Админ-панель: \http://127.0.0.1:8000/admin/
+   ```
+
+🌐 Проект будет доступен по адресу: `http://127.0.0.1:8000/`
+
 ## 🔒 Примечание для разработчиков
-В проекте встроена защита от открытия DevTools. Чтобы разблокировать инструменты разработчика для дебага, используйте секретную комбинацию: \Ctrl + Alt + K\.
+В проекте встроена защита от открытия DevTools. Чтобы разблокировать инструменты разработчика для дебага, используйте комбинацию: `Ctrl + Alt + K`.
 
 ---
 *Разработано с ❤️ by Khan*
