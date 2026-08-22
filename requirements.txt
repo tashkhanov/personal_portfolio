@@ -1,0 +1,4 @@
+Django>=5.0
+pillow>=10.0
+user-agents>=2.2.0
+requests>=2.31.0

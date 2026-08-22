@@ -1,0 +1,35 @@
+{% extends "portfolio/base.html" %}
+
+{% block title %}Процесс работы | {{ site.name }}{% endblock %}
+
+{% block content %}
+<section style="padding-top: 150px;">
+    <div class="sh reveal">
+        <div class="sl">ПРОЦЕСС</div>
+        <h1 class="st" >Как я работаю</h1>
+        <p class="sd">Прозрачный процесс от первого контакта до запуска</p>
+    </div>
+
+    <div class="process-timeline">
+        {% for step in process_steps %}
+        <div class="process-step reveal">
+            <div class="step-num">{{ step.num }}</div>
+            <div class="step-content">
+                <div class="step-header">
+                    <span class="step-icon"><i data-lucide="{{step.icon}}"></i></span>
+                    <span class="step-duration">{{ step.duration }}</span>
+                </div>
+                <h3>{{ step.title_ru }}</h3>
+                <p>{{ step.desc_ru }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<div class="cta-section">
+    <h2>Готовы начать?</h2>
+    <p>Напишите мне — обсудим ваш проект</p>
+    <a href="{{ site.telegram_url }}" target="_blank" class="btn-main">Написать в Telegram</a>
+</div>
+{% endblock %}

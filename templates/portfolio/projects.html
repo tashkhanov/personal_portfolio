@@ -1,0 +1,69 @@
+{% extends "portfolio/base.html" %}
+
+{% block title %}Все работы | {{ site.name }}{% endblock %}
+
+{% block content %}
+<section style="padding-top: 150px;">
+    <div class="sh reveal">
+        <div class="sl" >Портфолио</div>
+        <h1 class="st" >Все работы</h1>
+        <p class="sd" >Примеры выполненных проектов</p>
+    </div>
+
+    <div class="filters reveal" id="filters">
+        <a href="{% url 'portfolio:projects' %}" class="filter {% if selected_category == 'all' %}on{% endif %}" data-filter="all" >Все</a>
+        {% for cat in categories %}
+        <a href="{% url 'portfolio:projects' %}?cat={{ cat.slug }}" class="filter {% if selected_category == cat.slug %}on{% endif %}" data-filter="{{ cat.slug }}" >{{ cat.name_ru }}</a>
+        {% endfor %}
+    </div>
+
+    <div class="prj-wrap">
+        <div class="prj-grid">
+            {% for project in all_projects %}
+            <a href="javascript:void(0);" onclick="openProjectModal('{{ project.id }}')" class="prj reveal">
+                <div class="prj-img" style="background: {{ project.gradient|safe }}; position: relative; aspect-ratio: 16/9; height: auto;">
+                    {% if project.image and project.image.name %}
+                        <img src="{{ project.image.url }}" alt="{{ project.title }}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;object-position:top;">
+                    {% elif project.images.exists and project.images.first.image and project.images.first.image.name %}
+                        <img src="{{ project.images.first.image.url }}" alt="{{ project.title }}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;object-position:top;">
+                    {% else %}
+                        <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.4);">
+                            <i data-lucide="{{ project.icon|default:'globe' }}" style="width:80px;height:80px"></i>
+                        </div>
+                    {% endif %}
+                    <div class="prj-ov" style="position: absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; transition:0.3s; color:#fff; font-size:1.2rem; font-weight:500;">
+                        <span>Смотреть</span>
+                    </div>
+                </div>
+                <div class="prj-body">
+                    <h3>{{ project.title }}</h3>
+                    <p>{{ project.description_ru }}</p>
+                </div>
+            </a>
+            {% include 'portfolio/includes/project_modal.html' with project=project %}
+{% empty %}
+<p style='text-align:center;width:100%;color:var(--text);padding: 50px;'>Проектов в этой категории пока нет.</p>
+{% endfor %}
+        </div>
+        
+        {% if all_projects.has_other_pages %}
+        <div class="pagination" style="display:flex; justify-content:center; gap:10px; margin-top:50px;">
+            {% if all_projects.has_previous %}
+            <a href="?page={{ all_projects.previous_page_number }}{% if selected_category != 'all' %}&cat={{ selected_category }}{% endif %}" class="btn2" style="padding:8px 16px;">&laquo; Назад</a>
+            {% endif %}
+            
+            <div style="display:flex; align-items:center; gap:5px; font-weight:600; color:var(--t2);">
+                <span>Страница {{ all_projects.number }} из {{ all_projects.paginator.num_pages }}</span>
+            </div>
+            
+            {% if all_projects.has_next %}
+            <a href="?page={{ all_projects.next_page_number }}{% if selected_category != 'all' %}&cat={{ selected_category }}{% endif %}" class="btn2" style="padding:8px 16px;">Вперед &raquo;</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+
+{% endblock %}
+

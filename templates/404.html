@@ -1,0 +1,28 @@
+{% extends "portfolio/base.html" %}
+{% load static %}
+
+{% block title %}Страница не найдена | 404{% endblock %}
+
+{% block content %}
+<section class="hero" style="min-height: 70vh; display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center;">
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+    
+    <div class="hero-badge hero-badge-busy" style="margin-bottom: 20px;">
+        <span class="dot busy-dot"></span><span>Ошибка 404</span>
+    </div>
+    
+    <h1 class="hero-title" style="font-size: 6rem; margin-bottom: 10px;">
+        <span class="grad">404</span>
+    </h1>
+    
+    <p class="hero-sub" style="margin-bottom: 40px; font-size: 1.2rem; max-width: 500px;">
+        Упс! Кажется, этой страницы не существует или она была перемещена. 
+        Но не переживайте, самое интересное ждет вас на главной.
+    </p>
+    
+    <div class="hero-cta" style="justify-content: center;">
+        <a href="/" class="btn1">На главную →</a>
+    </div>
+</section>
+{% endblock %}

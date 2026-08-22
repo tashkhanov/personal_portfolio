@@ -1,0 +1,242 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ site.name }} | {{ site.title }}{% endblock %}</title>
+
+    
+    <meta name="description" content="{{ site.hero_text }}">
+    <meta property="og:title" content="{{ site.name }} | {{ site.title }}">
+    <meta property="og:description" content="{{ site.hero_text }}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    {% if site.hero_image %}
+    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ site.hero_image.url }}">
+    {% endif %}
+    <meta name="twitter:card" content="summary_large_image">
+
+
+    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=7">
+    <script>
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.remove('dark-theme');
+        } else {
+            document.documentElement.classList.add('dark-theme');
+        }
+    </script>
+
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js" defer></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" media="print"
+        onload="this.media='all'" />
+    <noscript>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    </noscript>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
+    <script src="https://unpkg.com/swup@4" defer></script>
+    <script src="https://unpkg.com/@swup/head-plugin@2" defer></script>
+</head>
+
+<body>
+
+    <div class="progress" id="progress"></div>
+
+    <nav>
+        <a href="{% url 'portfolio:index' %}" class="logo">{{ site.name }}</a>
+        <ul class="nav-links">
+            <li><a href="{% url 'portfolio:index' %}#hero">Главная</a></li>
+            <li><a href="{% url 'portfolio:index' %}#about">Обо мне</a></li>
+            <li><a href="{% url 'portfolio:index' %}#services">Услуги</a></li>
+            <li><a href="{% url 'portfolio:projects' %}">Проекты</a></li>
+            <li><a href="{% url 'portfolio:index' %}#reviews">Отзывы</a></li>
+            <li><a href="{% url 'portfolio:process' %}">Процесс</a></li>
+            <li><a href="{% url 'portfolio:index' %}#contact">Контакты</a></li>
+        </ul>
+        <div class="nav-right">
+
+            <button class="theme-toggle" id="themeToggle" title="Сменить тему">
+                <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+                <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+            </button>
+            <a href="{{ site.telegram_url }}" target="_blank" class="nav-cta">Написать</a>
+            <button class="menu-tog" id="mtog"><span></span><span></span><span></span></button>
+        </div>
+    </nav>
+
+    <div class="mob-nav" id="mnav">
+        <a href="{% url 'portfolio:index' %}#hero">Главная</a>
+        <a href="{% url 'portfolio:index' %}#about">Обо мне</a>
+        <a href="{% url 'portfolio:index' %}#services">Услуги</a>
+        <a href="{% url 'portfolio:projects' %}">Проекты</a>
+        <a href="{% url 'portfolio:index' %}#reviews">Отзывы</a>
+        <a href="{% url 'portfolio:process' %}">Процесс</a>
+        <a href="{% url 'portfolio:index' %}#contact">Контакты</a>
+    </div>
+
+    <main id="swup" class="transition-fade content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <div class="ftr">
+            <div class="reveal">
+                <span class="logo">{{ site.name }}</span>
+                <p>{{ site.title }}. {{ site.subtitle }}.</p>
+                <div class="ftr-social">
+                    <a href="{{ site.github_url|default:'#' }}" target="_blank" title="GitHub"><svg
+                            xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+                            </path>
+                        </svg></a>
+                    <a href="{{ site.telegram_url }}" target="_blank" title="Telegram"><i data-lucide="send"></i></a>
+                    <a href="{{ site.kwork_url }}" target="_blank" title="Kwork"><i data-lucide="briefcase"></i></a>
+                </div>
+            </div>
+            <div class="reveal">
+                <h4>Навигация</h4>
+                <ul>
+                    <li><a href="{% url 'portfolio:index' %}#hero">Главная</a></li>
+                    <li><a href="{% url 'portfolio:index' %}#about">Обо мне</a></li>
+                    <li><a href="{% url 'portfolio:projects' %}">Проекты</a></li>
+                    <li><a href="{% url 'portfolio:index' %}#contact">Контакты</a></li>
+                </ul>
+            </div>
+            <div class="reveal">
+                <h4>Услуги</h4>
+                <ul>
+                    {% for svc in services %}
+                    <li><a href="{% url 'portfolio:service_detail' svc.slug %}">{{ svc.title_ru }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="ftr-bottom">
+            <p>© 2026 {{ site.name }}. Developed with passion.</p>
+        </div>
+        <div class="ftr-credit">Khan — Portfolio 2026</div>
+    </footer>
+
+    <div class="chat-widget" id="chatWidget">
+        <div class="chat-head">
+            <div class="chat-head-info">
+                <div class="chat-av"><i data-lucide="bot"></i></div>
+                <div>
+                    <div class="chat-name">Khan AI</div>
+                    <div class="chat-online">● Online</div>
+                </div>
+            </div>
+            <button class="chat-x" id="chatClose">✕</button>
+        </div>
+        <div class="chat-msgs" id="chatMsgs">
+            <div class="chat-msg bot">Привет! Я AI-ассистент Khan. Спрашивайте про проекты, стек, условия — всё расскажу
+                👋</div>
+        </div>
+        <div class="chat-inp">
+            <input type="text" id="chatInput" placeholder="Написать сообщение..." autocomplete="off">
+            <button id="chatSend">→</button>
+        </div>
+    </div>
+
+    <button class="chat-fab" id="chatFab" title="AI Assistant">
+        <span class="chat-fab-icon"><i data-lucide="message-square"></i></span>
+        <span class="chat-fab-close">✕</span>
+    </button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+    <script src="{% static 'js/main.js' %}?v=8" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+
+            const fab = document.getElementById('chatFab');
+            const widget = document.getElementById('chatWidget');
+            const closeBtn = document.getElementById('chatClose');
+            const input = document.getElementById('chatInput');
+            const sendBtn = document.getElementById('chatSend');
+            const msgs = document.getElementById('chatMsgs');
+            let chatHistory = [];
+            let chatOpen = false;
+
+            function toggleChat() {
+                chatOpen = !chatOpen;
+                widget.classList.toggle('open', chatOpen);
+                fab.classList.toggle('open', chatOpen);
+                if (chatOpen) input.focus();
+            }
+
+            fab.addEventListener('click', toggleChat);
+            closeBtn.addEventListener('click', toggleChat);
+
+            function addMsg(text, role) {
+                const div = document.createElement('div');
+                div.className = 'chat-msg ' + role;
+                div.textContent = text;
+                msgs.appendChild(div);
+                msgs.scrollTop = msgs.scrollHeight;
+            }
+
+            async function sendMessage() {
+                const text = input.value.trim();
+                if (!text) return;
+                input.value = '';
+                addMsg(text, 'user');
+                chatHistory.push({ role: 'user', text });
+
+                const typing = document.createElement('div');
+                typing.className = 'chat-msg bot typing';
+                typing.textContent = '...';
+                msgs.appendChild(typing);
+                msgs.scrollTop = msgs.scrollHeight;
+
+                try {
+                    const res = await fetch('/api/chat/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message: text, history: chatHistory })
+                    });
+                    const data = await res.json();
+                    typing.remove();
+                    if (data.status === 'ok') {
+                        addMsg(data.response, 'bot');
+                        chatHistory.push({ role: 'model', text: data.response });
+                    }
+                } catch {
+                    typing.remove();
+                    addMsg('Ошибка соединения. Напишите в Telegram: @asatkhanov', 'bot');
+                }
+            }
+
+            sendBtn.addEventListener('click', sendMessage);
+            input.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

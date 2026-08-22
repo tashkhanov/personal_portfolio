@@ -1,0 +1,121 @@
+{% extends "portfolio/base.html" %}
+
+{% block title %}{{ service.title_ru }} | {{ site.name }}
+{% endblock %}
+
+
+
+{% block content %}
+<div class="hero-section" style="padding-top: 150px;">
+    <div class="breadcrumb">
+        <a href="{% url 'portfolio:index' %}" >Главная</a>
+        <span>/</span>
+        <a href="{% url 'portfolio:index' %}#services" >Услуги</a>
+        <span>/</span>
+        <span>{{ service.title_ru }}</span>
+    </div>
+    <div class="project-header">
+        <div class="project-hero-img" style="background:{{ service.gradient }}">
+            {% if service.image %}<img src="{{ service.image.url }}" alt="{{ service.title_ru }}" fetchpriority="high" decoding="sync" width="1200" height="400" style="width:100%;height:100%;object-fit:cover;border-radius:24px">{% else %}<i data-lucide="{{service.icon}}"></i>{% endif %}
+        </div>
+        <div class="project-info">
+            <div class="project-badge" >Услуга</div>
+            <h1 >{{ service.title_ru }}</h1>
+            <p class="desc" >{{ service.description_ru }}</p>
+            <div class="tech-tags">
+                {% for f in features %}
+                <span class="tech-tag">{{ f.text_ru }}</span>
+                {% endfor %}
+            </div>
+            <div class="action-btns">
+                <a href="{{ site.telegram_url }}" target="_blank" class="btn-main" >Заказать</a>
+                <a href="{% url 'portfolio:index' %}#services" class="btn-outline" >← Все услуги</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="details-section">
+    <div class="details-grid">
+        <div class="detail-block reveal">
+            <h2><span class="icon"><i data-lucide="file-text"></i></span><span >Подробнее</span></h2>
+            {% if service.full_description_ru %}
+            <p >{{ service.full_description_ru }}</p>
+            {% else %}
+            <p>{{ service.description_ru }}</p>
+            {% endif %}
+            <p >Детали, объём работ и конечная цена уточняются лично при обсуждении задачи.</p>
+        </div>
+        <div class="detail-block reveal">
+            <h2><span class="icon"><i data-lucide="sparkles"></i></span><span >Что входит</span></h2>
+            <ul>
+                {% for f in features %}
+                <li >{{ f.text_ru }}</li>
+                {% endfor %}
+                <li >Консультация перед началом работы</li>
+                <li >Поддержка после сдачи</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+{% if related_projects %}
+<div class="related" style="padding: 50px 20px;">
+    <h2 style="margin-bottom: 30px; font-size: 2rem; font-weight: 800;">Примеры работ</h2>
+    <div class="prj-grid">
+        {% for rel in related_projects %}
+        <a href="javascript:void(0);" onclick="openProjectModal('{{ rel.id }}')" class="prj reveal">
+            <div class="prj-img" style="background:{{ rel.gradient }}; position: relative; display:flex; align-items:center; justify-content:center;">
+                {% if rel.image %}
+                    <img src="{{ rel.image.url }}" loading="lazy" decoding="async" width="800" height="500" style="width:100%;height:100%;object-fit:cover;">
+                {% else %}
+                    <i data-lucide="{{ rel.icon|default:'globe' }}" style="width:48px;height:48px;color:rgba(255,255,255,0.4);"></i>
+                {% endif %}
+                <div class="prj-ov" style="position: absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; transition:0.3s; color:#fff; font-size:1.2rem; font-weight:500;">
+                    <span>Смотреть</span>
+                </div>
+            </div>
+            <div class="prj-body">
+                <h3>{{ rel.title }}</h3>
+                <p>{{ rel.description_ru|truncatewords:10 }}</p>
+            </div>
+        </a>
+        {% include 'portfolio/includes/project_modal.html' with project=rel %}
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<div class="cta-section reveal">
+    <h2 data-ru="Нужна эта услуга?" >Нужна эта услуга?</h2>
+    <p >Напишите мне — обсудим задачу и сроки</p>
+    <a href="{{ site.telegram_url }}" target="_blank" class="btn-main" >Написать в Telegram</a>
+</div>
+
+<!-- modal -->
+<div class="project-modal" id="projectModal">
+    <button class="modal-close" onclick="closeProjectModal()">✕</button>
+    <div class="modal-content">
+        <div class="modal-left" style="overflow-y: auto;">
+            <h2 id="modalTitle">Project Title</h2>
+            <div class="modal-tags" id="modalTags"></div>
+            
+            <div class="modal-details-grid">
+                <div class="md-item"><span class="md-label">Клиент</span><span class="md-val" id="modalClient"></span></div>
+                <div class="md-item"><span class="md-label">Год</span><span class="md-val" id="modalYear"></span></div>
+            </div>
+            
+            <p id="modalDesc" style="white-space: pre-wrap; margin-bottom: 20px;"></p>
+            
+            <div style="display:flex; gap:15px; margin-top:20px;">
+                <a href="#" target="_blank" class="btn1" id="modalDemoBtn">Смотреть сайт <i data-lucide="external-link"></i></a>
+                <a href="#" target="_blank" class="btn2" id="modalGithubBtn" style="border-radius:30px;"><i data-lucide="github"></i> GitHub</a>
+            </div>
+        </div>
+        <div class="modal-right">
+            <img id="modalCover" src="" class="modal-cover" alt="Cover">
+        </div>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,69 @@
+<div class="project-modal" id="modal-{{ project.id }}">
+    <button class="modal-close" onclick="closeProjectModal('{{ project.id }}')">✕</button>
+    <div class="modal-content">
+        <div class="modal-left" style="overflow-y: auto;">
+            <h2>{{ project.title }}</h2>
+            
+            <div class="modal-tags">
+                {% for tag in project.get_tags_list %}
+                <span>{{ tag }}</span>
+                {% endfor %}
+            </div>
+            
+            <div class="modal-details-grid">
+                <div class="md-item"><span class="md-label">Клиент</span><span class="md-val">{{ project.client_name }}</span></div>
+                <div class="md-item"><span class="md-label">Год</span><span class="md-val">{{ project.year }}</span></div>
+            </div>
+            
+            <div style="margin-bottom: 20px; line-height: 1.6;">{% if project.full_description_ru %}{{ project.full_description_ru|safe }}{% else %}{{ project.description_ru|safe }}{% endif %}</div>
+            
+            <div style="display:flex; gap:15px; margin-top:20px;">
+                {% if project.demo_url %}
+                <a href="{{ project.demo_url }}" target="_blank" class="btn1">Смотреть сайт <i data-lucide="external-link"></i></a>
+                {% endif %}
+                {% if project.github_url %}
+                <a href="{{ project.github_url }}" target="_blank" class="btn2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:-2px;"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                    GitHub
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="modal-right" style="position: relative; display: flex; flex-direction: column; background: var(--bg2);">
+            {% if project.image.name or project.images.exists %}
+                <div class="swiper modal-swiper-{{ project.id }}" style="width: 100%; height: 100%;">
+                    <div class="swiper-wrapper">
+                        {% if project.images.exists %}
+                            {% for img in project.images.all %}
+                                {% if img.image and img.image.name %}
+                                <div class="swiper-slide" style="display:flex; align-items:center; justify-content:center;">
+                                    <img src="{{ img.image.url }}" alt="{{ img.caption|default:project.title }}" loading="lazy" decoding="async" width="1000" height="600" style="max-width: 100%; max-height: 100%; object-fit: contain; padding: 10px;" draggable="false">
+                                </div>
+                                {% endif %}
+                                {% if img.video and img.video.name %}
+                                <div class="swiper-slide" style="display:flex; align-items:center; justify-content:center;">
+                                    <video src="{{ img.video.url }}" controls controlsList="nodownload" autoplay loop muted playsinline style="max-width: 100%; max-height: 100%; object-fit: contain; padding: 10px;"></video>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% elif project.image and project.image.name %}
+                            <div class="swiper-slide" style="display:flex; align-items:center; justify-content:center;">
+                                <img src="{{ project.image.url }}" alt="{{ project.title }}" loading="lazy" decoding="async" width="1000" height="600" style="max-width: 100%; max-height: 100%; object-fit: contain; padding: 10px;" draggable="false">
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+
+                    <div class="swiper-button-next" style="color: var(--accent);"></div>
+                    <div class="swiper-button-prev" style="color: var(--accent);"></div>
+
+                    <div class="swiper-pagination"></div>
+                </div>
+            {% else %}
+                <div style="width:100%; height:100%; min-height: 400px; display:flex; align-items:center; justify-content:center; color:var(--border);">
+                    <i data-lucide="{{ project.icon|default:'globe' }}" style="width:120px; height:120px;"></i>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

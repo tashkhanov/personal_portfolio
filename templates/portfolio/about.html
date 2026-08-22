@@ -1,0 +1,181 @@
+{% extends 'portfolio/base.html' %}
+{% load static %}
+
+{% block title %}Обо мне | {{ site.name }}{% endblock %}
+
+{% block content %}
+    <section class="about-page-hero" style="padding-top: 150px; padding-bottom: 50px;">
+        <div style="max-width: 1200px; margin: 0 auto; width: 90%;">
+            <div class="sh reveal" data-num="01"><div class="sl">Обо мне</div><h1 class="st">Мое резюме</h1></div>
+            
+            <div class="about-page-grid reveal">
+                <div class="about-portrait-col">
+                    <div class="portrait-wrapper">
+                        {% if site.portrait %}
+                            <img src="{{ site.portrait.url }}" alt="{{ site.name }}" class="portrait-img">
+                        {% else %}
+                            <div class="portrait-placeholder">
+                                <i data-lucide="user" style="width: 80px; height: 80px; color: var(--t3);"></i>
+                            </div>
+                        {% endif %}
+                        <div class="portrait-glow"></div>
+                    </div>
+                </div>
+                
+                <div class="about-bio-col">
+                    <h2 style="font-size: 3rem; margin-bottom: 5px;"><span class="hl">Асатханов Иброхим</span></h2>
+                    <h3 style="font-size: 1.2rem; color: var(--t2); margin-bottom: 25px; font-weight: 500;">Backend / Fullstack Developer</h3>
+
+                    <div class="bio-content" style="color: var(--t2); line-height: 1.8; font-size: 1.05rem;">
+                        {{ site.about_full_text|safe|linebreaks }}
+                    </div>
+
+                    <div class="about-actions" style="margin-top: 40px; display: flex; gap: 15px; flex-wrap: wrap;">
+                        {% if site.github_url %}
+                        <a href="{{ site.github_url }}" target="_blank" class="btn-action btn-action-primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg> GitHub
+                        </a>
+                        {% endif %}
+                        {% if site.kwork_url %}
+                        <a href="{{ site.kwork_url }}" target="_blank" class="btn-action btn-action-primary">
+                            <i data-lucide="briefcase"></i> Kwork
+                        </a>
+                        {% endif %}
+                        {% if site.telegram_url %}
+                        <a href="{{ site.telegram_url }}" target="_blank" class="btn-action btn-action-primary">
+                            <i data-lucide="send"></i> Telegram
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stats reveal" style="margin-top: 80px; padding: 40px; background: var(--bg2); border: 1px solid var(--border); border-radius: 24px; position: relative;">
+                <div style="position: absolute; top: -16px; left: 50%; transform: translateX(-50%); background: var(--cyan); color: var(--bg); padding: 4px 16px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; display: flex; align-items: center; gap: 6px;">
+                    <i data-lucide="briefcase" style="width: 14px; height: 14px;"></i> Статистика Kwork
+                </div>
+                {% for stat in stats %}
+                <div class="stat">
+                    {% if '%' in stat.value %}
+                        <div class="stat-v counter" data-target="{{ stat.value|cut:'%' }}" data-suffix="%">0</div>
+                    {% elif '+' in stat.value %}
+                        <div class="stat-v counter" data-target="{{ stat.value|cut:'+' }}" data-suffix="+">0</div>
+                    {% else %}
+                        <div class="stat-v counter" data-target="{{ stat.value }}" data-suffix="">0</div>
+                    {% endif %}
+                    <div class="stat-l" >{{ stat.label_ru }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="skills-section" style="padding-top: 60px;">
+        <div style="max-width: 1200px; margin: 0 auto; width: 90%;">
+            <div class="sh reveal" data-num="02"><div class="sl">Стек</div><h2 class="st">Навыки и Технологии</h2></div>
+            
+            <div class="detailed-skills-grid reveal">
+                <div class="d-skill-card">
+                    <div class="d-skill-icon"><i data-lucide="server"></i></div>
+                    <h3>Backend</h3>
+                    <p>Python, Django, Django REST Framework, PHP, Laravel</p>
+                </div>
+                <div class="d-skill-card">
+                    <div class="d-skill-icon"><i data-lucide="database"></i></div>
+                    <h3>Базы данных</h3>
+                    <p>PostgreSQL, MySQL, SQLite, работа с SQL-запросами и оптимизация</p>
+                </div>
+                <div class="d-skill-card">
+                    <div class="d-skill-icon"><i data-lucide="layout"></i></div>
+                    <h3>Frontend</h3>
+                    <p>JavaScript, HTML5, CSS3/SCSS, Bootstrap, интеграция анимаций и 3D</p>
+                </div>
+                <div class="d-skill-card">
+                    <div class="d-skill-icon"><i data-lucide="hard-drive"></i></div>
+                    <h3>Инфраструктура</h3>
+                    <p>Ubuntu, VPS, Nginx, Gunicorn, Git, Cron, базовый CI/CD</p>
+                </div>
+                <div class="d-skill-card">
+                    <div class="d-skill-icon"><i data-lucide="plug"></i></div>
+                    <h3>API и интеграции</h3>
+                    <p>Telegram API, Google Sheets API, платежные системы, OpenAI, Claude, Gemini, DeepSeek</p>
+                </div>
+                <div class="d-skill-card">
+                    <div class="d-skill-icon"><i data-lucide="search"></i></div>
+                    <h3>Парсинг</h3>
+                    <p>BeautifulSoup, Selenium, работа с сайтами с защитой Cloudflare</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {% if experiences %}
+    <section class="experience-section" style="padding-top: 60px; padding-bottom: 60px;">
+        <div style="max-width: 1000px; margin: 0 auto; width: 90%;">
+            <div class="sh reveal" data-num="03"><div class="sl">Карьера</div><h2 class="st">Опыт работы</h2></div>
+            
+            <div class="timeline reveal">
+                {% for exp in experiences %}
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-header">
+                            <h3 class="timeline-position">{{ exp.position }}</h3>
+                            <span class="timeline-period">{{ exp.period }}</span>
+                        </div>
+                        <div class="timeline-company"><i data-lucide="building-2"></i> {{ exp.company }}</div>
+                        <div class="timeline-desc">
+                            {{ exp.description|safe }}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div style="text-align: center; margin-top: 50px;" class="reveal">
+                <a href="{% url 'portfolio:projects' %}" class="btn1">Все работы →</a>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    {% if certificates %}
+    <section class="certificates-section" style="padding-top: 60px; padding-bottom: 120px;">
+        <div style="max-width: 1200px; margin: 0 auto; width: 90%;">
+            <div class="sh reveal" data-num="04"><div class="sl">Обучение</div><h2 class="st">Сертификаты и Дипломы</h2></div>
+            
+            <div class="cert-grid reveal">
+                {% for cert in certificates %}
+                <div class="cert-card">
+                    <div class="cert-img-wrap">
+                        <img src="{{ cert.image.url }}" alt="{{ cert.title }}">
+                        <div class="cert-overlay">
+                            <a href="{{ cert.image.url }}" target="_blank" class="cert-zoom-btn">
+                                <i data-lucide="zoom-in"></i> Увеличить
+                            </a>
+                        </div>
+                    </div>
+                    <div class="cert-info">
+                        <h3 class="cert-title">{{ cert.title }}</h3>
+                        {% if cert.institution %}
+                        <div class="cert-meta"><i data-lucide="award"></i> {{ cert.institution }}</div>
+                        {% endif %}
+                        <div class="cert-meta-group">
+                            {% if cert.issued_date %}
+                            <div class="cert-meta"><i data-lucide="calendar"></i> {{ cert.issued_date }}</div>
+                            {% endif %}
+                            {% if cert.duration %}
+                            <div class="cert-meta"><i data-lucide="clock"></i> {{ cert.duration }}</div>
+                            {% endif %}
+                            {% if cert.credential_id %}
+                            <div class="cert-meta"><i data-lucide="hash"></i> ID: {{ cert.credential_id }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+{% endblock %}
