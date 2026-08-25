@@ -1,4 +1,50 @@
 from django.db import models
+from django.core.files.base import ContentFile
+from PIL import Image
+import io
+import os
+
+def optimize_image(image_field, max_width=1920, quality=85):
+    if not image_field or not image_field.name:
+        return
+    
+   
+    ext = os.path.splitext(image_field.name)[1].lower()
+    if ext not in ['.jpg', '.jpeg', '.png']:
+        return
+
+    try:
+        img = Image.open(image_field)
+        
+        
+        if img.mode in ("RGBA", "P"):
+            img = img.convert("RGB")
+            
+        
+        if img.width > max_width:
+            ratio = max_width / img.width
+            new_height = int(img.height * ratio)
+            img = img.resize((max_width, new_height), Image.Resampling.LANCZOS)
+            
+        output = io.BytesIO()
+        img.save(output, format='WEBP', quality=quality)
+        img.close()
+        image_field.close()
+        output.seek(0)
+        
+       
+        
+        base_name = os.path.splitext(os.path.basename(image_field.name))[0]
+        if len(base_name) > 50:
+            import hashlib
+            base_name = hashlib.md5(base_name.encode('utf-8')).hexdigest()[:15]
+        new_name = base_name + '.webp'
+
+        image_field.save(new_name, ContentFile(output.read()), save=False)
+    except Exception as e:
+        print(f"Error optimizing image: {e}")
+        pass
+
 
 LUCIDE_ICONS = [
     ('globe', 'Веб-сайт / Глобальный (Globe)'),
@@ -135,6 +181,15 @@ class Certificate(models.Model):
     def __str__(self):
         return self.title
 
+    def save(self, *args, **kwargs):
+        if self.pk:
+            old = Certificate.objects.filter(pk=self.pk).first()
+            if old and old.image != self.image:
+                optimize_image(self.image)
+        else:
+            optimize_image(self.image)
+        super().save(*args, **kwargs)
+
 
 class Experience(models.Model):
     company = models.CharField('Компания / Проект', max_length=200)
@@ -188,6 +243,15 @@ class Project(models.Model):
     def get_category_slug(self):
         return self.category.slug if self.category else ''
 
+    def save(self, *args, **kwargs):
+        if self.pk:
+            old = Project.objects.filter(pk=self.pk).first()
+            if old and old.image != self.image:
+                optimize_image(self.image)
+        else:
+            optimize_image(self.image)
+        super().save(*args, **kwargs)
+
 
 class ProjectImage(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='images', verbose_name='Проект')
@@ -203,6 +267,15 @@ class ProjectImage(models.Model):
 
     def __str__(self):
         return f'{self.project.title} - {self.order}'
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            old = ProjectImage.objects.filter(pk=self.pk).first()
+            if old and old.image != self.image:
+                optimize_image(self.image)
+        else:
+            optimize_image(self.image)
+        super().save(*args, **kwargs)
 
 
 class Service(models.Model):
@@ -222,6 +295,16 @@ class Service(models.Model):
 
     def __str__(self):
         return self.title_ru
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            old = Service.objects.filter(pk=self.pk).first()
+            if old and old.image != self.image:
+                optimize_image(self.image)
+        else:
+            optimize_image(self.image)
+        super().save(*args, **kwargs)
+
 
 class ServiceFeature(models.Model):
     service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name='features', verbose_name='Услуга')

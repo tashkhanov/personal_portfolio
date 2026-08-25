@@ -78,13 +78,14 @@ window.openProjectModal = function (id) {
     const swiperEl = document.querySelector('.modal-swiper-' + id);
     if (swiperEl && !swiperEl.swiper) {
         new Swiper(swiperEl, {
-            navigation: {
-                nextEl: swiperEl.querySelector('.swiper-button-next'),
-                prevEl: swiperEl.querySelector('.swiper-button-prev'),
-            },
+
             pagination: {
                 el: swiperEl.querySelector('.swiper-pagination'),
                 type: 'fraction',
+            },
+            navigation: {
+                nextEl: swiperEl.parentElement.querySelector('.swiper-button-next'),
+                prevEl: swiperEl.parentElement.querySelector('.swiper-button-prev'),
             },
             grabCursor: true,
             spaceBetween: 30,
