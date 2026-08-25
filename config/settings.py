@@ -4,7 +4,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-khan-portfolio-2026-secret-key'
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 CSRF_TRUSTED_ORIGINS = ['https://asatkhanov.uz', 'https://www.asatkhanov.uz', 'https://khan710.pythonanywhere.com']
