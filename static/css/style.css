@@ -3750,3 +3750,25 @@ img {
 
 .swiper-button-next, .swiper-button-prev { pointer-events: all !important; }
 
+
+
+/* ==========================================================================
+   MOBILE PERFORMANCE OPTIMIZATIONS
+   ========================================================================== */
+@media (max-width: 768px) {
+    /* Freeze all heavy background animations to save GPU/Battery on mobile */
+    .ambient-orb, 
+    .orb-1, .orb-2, .orb-3,
+    .blob, .blob-1, .blob-2,
+    .hero-glow-1, .hero-glow-2,
+    .skill-sphere {
+        animation: none !important;
+        transform: translateZ(0); /* Hardware acceleration fallback */
+    }
+
+    /* Reduce blur intensity on the heaviest elements if needed */
+    /* .glass-panel, .modal-content {
+        backdrop-filter: blur(10px) !important;
+        -webkit-backdrop-filter: blur(10px) !important;
+    } */
+}
