@@ -12,19 +12,39 @@ logger = logging.getLogger(__name__)
 
 class AnalyticsMiddleware(MiddlewareMixin):
     def process_request(self, request):
+        # 1. Игнорируем запросы от админа (чтобы не трекать тебя)
+        if hasattr(request, 'user') and request.user.is_authenticated and request.user.is_staff:
+            return
+            
         path = request.path
+        
+        # 2. Игнорируем бесполезные технические пути
         if path.startswith('/admin/') or path.startswith('/static/') or path.startswith('/media/') or path.startswith('/__reload__/'):
             return
             
+        if path in ['/favicon.ico', '/robots.txt', '/apple-touch-icon.png']:
+            return
+            
         try:
-            x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-            if x_forwarded_for:
-                ip = x_forwarded_for.split(',')[0].strip()
+            # 3. Извлекаем реальный IP от Cloudflare
+            cf_connecting_ip = request.META.get('HTTP_CF_CONNECTING_IP')
+            if cf_connecting_ip:
+                ip = cf_connecting_ip
             else:
-                ip = request.META.get('REMOTE_ADDR')
+                x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+                if x_forwarded_for:
+                    ip = x_forwarded_for.split(',')[0].strip()
+                else:
+                    ip = request.META.get('REMOTE_ADDR')
                 
             ua_string = request.META.get('HTTP_USER_AGENT', '')
             referer = request.META.get('HTTP_REFERER', '')
+            
+            # 4. Проверяем на бота и ИГНОРИРУЕМ их
+            if HAS_USER_AGENTS and ua_string:
+                user_agent = parse(ua_string)
+                if user_agent.is_bot:
+                    return  # Полностью игнорируем ботов
             
             if not request.session.session_key:
                 request.session.save()
@@ -39,7 +59,6 @@ class AnalyticsMiddleware(MiddlewareMixin):
             )
             
             if HAS_USER_AGENTS and ua_string:
-                user_agent = parse(ua_string)
                 visit.is_mobile = user_agent.is_mobile
                 visit.is_tablet = user_agent.is_tablet
                 visit.is_pc = user_agent.is_pc
