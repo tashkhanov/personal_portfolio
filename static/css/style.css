@@ -3772,3 +3772,20 @@ img {
         -webkit-backdrop-filter: blur(10px) !important;
     } */
 }
+
+@media (max-width: 768px) {
+    /* Prevent hidden elements from being invisible when GSAP is disabled on mobile */
+    .gsap-fade, .gsap-svc {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+    .services-content-wrap {
+        opacity: 1 !important;
+    }
+    /* Turn off heavy blur completely on mobile for maximum FPS */
+    .glass-panel, .header, .modal-content, .bento-item, .svc, .hero-glow-1, .hero-glow-2 {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        background: rgba(14, 15, 17, 0.95) !important; /* Fallback solid dark color */
+    }
+}

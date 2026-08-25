@@ -170,7 +170,7 @@ function initPage() {
     }
 
     // animations
-    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' && window.innerWidth > 768) {
         ScrollTrigger.getAll().forEach(t => t.kill());
         gsap.registerPlugin(ScrollTrigger);
 
