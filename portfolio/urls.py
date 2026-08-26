@@ -4,6 +4,8 @@ from . import views
 app_name = 'portfolio'
 
 urlpatterns = [
+    path('.well-known/mcp/server-card.json', views.mcp_server_card, name='mcp_server_card'),
+
     path('.well-known/agent-skills/index.json', views.agent_skills_index, name='agent_skills_index'),
     path('.well-known/agent-skills/contact-skill.md', views.agent_skills_skill, name='agent_skills_skill'),
 

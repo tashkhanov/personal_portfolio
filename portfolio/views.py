@@ -403,3 +403,33 @@ Content-Type: application/json
     }
     from django.http import JsonResponse
     return JsonResponse(data)
+
+def mcp_server_card(request):
+    base_url = f"{request.scheme}://{request.get_host()}"
+    data = {
+        "serverInfo": {
+            "name": "Asatkhanov MCP Server",
+            "version": "1.0.0"
+        },
+        "endpoints": [
+            {
+                "url": f"{base_url}/mcp",
+                "transport": "http"
+            }
+        ],
+        "capabilities": {
+            "tools": {
+                "submit_contact": {
+                    "description": "Submit a contact message to Ibrohim"
+                }
+            },
+            "resources": {
+                "portfolio_data": {
+                    "description": "JSON representation of all projects and services"
+                }
+            },
+            "prompts": {}
+        }
+    }
+    from django.http import JsonResponse
+    return JsonResponse(data)
