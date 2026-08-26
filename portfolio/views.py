@@ -236,18 +236,6 @@ def ai_markdown(request):
 from django.http import JsonResponse
 
 
-# ==============================================================================
-# 🚨 AEO (Answer Engine Optimization) DUMMY ENDPOINTS 🚨
-# 
-# The following endpoints (api_catalog, oauth_discovery, mcp_server_card, 
-# x402_protected, etc.) were created PURELY to satisfy the AEO scanners 
-# (e.g., isitagentready.com) and publish metadata for AI agents.
-#
-# IMPORTANT FOR FUTURE DEVELOPERS OR AI AGENTS:
-# These do NOT contain real payment processing, OAuth servers, or security logic.
-# If you are implementing real payments (Stripe, Crypto) or real auth, DO NOT 
-# rely on these endpoints. You must implement actual security logic from scratch.
-# ==============================================================================
 
 def api_catalog(request):
     base_url = f"{request.scheme}://{request.get_host()}"
@@ -357,15 +345,6 @@ def agent_card_json(request):
                 "id": "skill-contact",
                 "name": "Contact Submission",
                 "description": "Can send a message to Ibrohim."
-            }
-        ],
-        "extensions": [
-            {
-                "uri": "https://github.com/google-agentic-commerce/AP2/tree/v0.1.0",
-                "required": True,
-                "params": {
-                    "roles": ["merchant"]
-                }
             }
         ]
     }
@@ -488,75 +467,3 @@ def acp_json(request):
     }
     from django.http import JsonResponse
     return JsonResponse(data)
-
-def openapi_json(request):
-    data = {
-        "openapi": "3.0.0",
-        "info": {
-            "title": "Asatkhanov Portfolio API",
-            "version": "1.0.0"
-        },
-        "x-service-info": {
-            "categories": ["portfolio", "freelance"]
-        },
-        "paths": {
-            "/api/book-consultation/": {
-                "post": {
-                    "summary": "Book a consultation session",
-                    "x-payment-info": {
-                        "intent": "charge",
-                        "method": "stripe",
-                        "amount": 5000,
-                        "currency": "USD",
-                        "description": "1 hour consultation"
-                    },
-                    "responses": {
-                        "200": {
-                            "description": "OK"
-                        }
-                    }
-                }
-            }
-        }
-    }
-    from django.http import JsonResponse
-    return JsonResponse(data)
-
-def ucp_json(request):
-    base_url = f"{request.scheme}://{request.get_host()}"
-    data = {
-        "protocol_version": "1.0",
-        "services": [
-            {
-                "id": "consultation",
-                "name": "Consultation",
-                "schema": f"{base_url}/openapi.json"
-            }
-        ],
-        "capabilities": [
-            "content_payment"
-        ],
-        "endpoints": {
-            "payment": f"{base_url}/api/book-consultation/"
-        }
-    }
-    from django.http import JsonResponse
-    return JsonResponse(data)
-
-def x402_protected(request):
-    import json
-    import base64
-    from django.http import JsonResponse
-    
-    # Fake payment required object
-    pr = {
-        "x402Version": 2,
-        "amount": "1000",
-        "description": "Premium Agent Content"
-    }
-    pr_b64 = base64.b64encode(json.dumps(pr).encode('utf-8')).decode('utf-8')
-    
-    response = JsonResponse({"error": "Payment Required"})
-    response.status_code = 402
-    response['PAYMENT-REQUIRED'] = pr_b64
-    return response
