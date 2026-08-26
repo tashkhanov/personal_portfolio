@@ -103,16 +103,35 @@ def process(request):
 
 
 def contact_submit(request):
+    from django.core.cache import cache
+    
     if request.method == 'POST':
+        # --- RATE LIMITING (Anti-Spam for AI Bots & Users) ---
+        client_ip = request.META.get('REMOTE_ADDR')
+        cache_key = f'contact_limit_{client_ip}'
+        attempts = cache.get(cache_key, 0)
+        
+        if attempts >= 3:
+            return JsonResponse({'status': 'error', 'message': 'Слишком много запросов. Попробуйте позже.'}, status=429)
+            
+        cache.set(cache_key, attempts + 1, 3600) # Limit: 3 requests per hour
+        # -----------------------------------------------------
+
         name = request.POST.get('name', '').strip()
         email = request.POST.get('email', '').strip()
         message_text = request.POST.get('message', '').strip()
+        
+        # --- PAYLOAD VALIDATION ---
+        if len(name) > 100 or len(email) > 100 or len(message_text) > 2000:
+            return JsonResponse({'status': 'error', 'message': 'Данные слишком длинные.'}, status=400)
+            
         if name and email and message_text:
             ContactMessage.objects.create(name=name, email=email, message=message_text)
             settings = SiteSettings.objects.first()
             send_telegram(settings, name, email, message_text)
-            return JsonResponse({'status': 'ok', 'message': 'Сообщение отправлено!'})
+            return JsonResponse({'status': 'ok', 'message': 'Успешно отправлено!'})
         return JsonResponse({'status': 'error', 'message': 'Заполните все поля'})
+    return JsonResponse({'status': 'error', 'message': 'Неверный метод'})
     return JsonResponse({'status': 'error', 'message': 'Метод не поддерживается'})
 
 
