@@ -4,6 +4,10 @@ from . import views
 app_name = 'portfolio'
 
 urlpatterns = [
+    path('robots.txt', views.robots_txt, name='robots_txt'),
+    path('sitemap.xml', views.sitemap_xml, name='sitemap_xml'),
+    path('llms.txt', views.ai_markdown, name='ai_markdown'),
+
     path('', views.index, name='index'),
     path('about/', views.about, name='about'),
     path('projects/', views.projects, name='projects'),

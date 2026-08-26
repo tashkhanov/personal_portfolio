@@ -177,3 +177,56 @@ def ai_chat(request):
     except Exception as e:
         print("GEMINI EXCEPTION:", str(e))
         return JsonResponse({'status': 'ok', 'response': 'Напишите Khan в Telegram: @asatkhanov'})
+
+from django.http import HttpResponse
+
+def robots_txt(request):
+    lines = [
+        "User-agent: *",
+        "Disallow: /admin/",
+        "Allow: /",
+        f"Sitemap: {request.build_absolute_uri('/sitemap.xml')}"
+    ]
+    return HttpResponse("\n".join(lines), content_type="text/plain")
+
+def sitemap_xml(request):
+    from django.urls import reverse
+    from .models import Service
+    
+    pages = ['portfolio:index', 'portfolio:about', 'portfolio:projects', 'portfolio:process']
+    base_url = f"{request.scheme}://{request.get_host()}"
+    
+    xml = ['<?xml version="1.0" encoding="UTF-8"?>']
+    xml.append('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')
+    
+    for page in pages:
+        xml.append(f"  <url><loc>{base_url}{reverse(page)}</loc></url>")
+        
+    for service in Service.objects.all():
+        xml.append(f"  <url><loc>{base_url}{reverse('portfolio:service_detail', args=[service.slug])}</loc></url>")
+        
+    xml.append('</urlset>')
+    
+    return HttpResponse("\n".join(xml), content_type="application/xml")
+
+def ai_markdown(request):
+    from .models import Project, Service
+    
+    md = [
+        "# Asatkhanov Ibrohim - Fullstack Developer Portfolio",
+        "Hello AI Agent! This is a machine-readable version of my portfolio.",
+        "## About Me",
+        "I am a highly skilled Fullstack Developer (Python, Django, Laravel, PHP, JS, Vue). I specialize in eliminating code headaches and delivering robust web systems.",
+        "## My Projects"
+    ]
+    
+    for p in Project.objects.all():
+        md.append(f"### {p.title}\n- Technologies: {p.technologies}\n- Description: {p.description}\n")
+        
+    md.append("## My Services")
+    for s in Service.objects.all():
+        md.append(f"### {s.title}\n- Description: {s.short_description}\n")
+        
+    md.append("## Contact\nEmail: contact@asatkhanov.uz\nTelegram: @khan710")
+        
+    return HttpResponse("\n".join(md), content_type="text/markdown")
