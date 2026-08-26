@@ -49,7 +49,9 @@ def index(request):
     page_number = request.GET.get('page')
     ctx['reviews'] = paginator.get_page(page_number)
     
-    return render(request, 'portfolio/index.html', ctx)
+    response = render(request, 'portfolio/index.html', ctx)
+    response['Link'] = '</.well-known/api-catalog>; rel="api-catalog", </api/openapi.yaml>; rel="service-desc", </llms.txt>; rel="describedby"'
+    return response
 
 
 def about(request):
