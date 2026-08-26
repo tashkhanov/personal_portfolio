@@ -4,6 +4,8 @@ from . import views
 app_name = 'portfolio'
 
 urlpatterns = [
+    path('.well-known/acp.json', views.acp_json, name='acp_json'),
+
     path('.well-known/http-message-signatures-directory', views.http_message_signatures_directory, name='http_message_signatures_directory'),
 
     path('.well-known/mcp/server-card.json', views.mcp_server_card, name='mcp_server_card'),

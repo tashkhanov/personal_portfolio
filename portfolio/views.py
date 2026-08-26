@@ -449,3 +449,19 @@ def http_message_signatures_directory(request):
     }
     from django.http import JsonResponse
     return JsonResponse(data)
+
+def acp_json(request):
+    base_url = f"{request.scheme}://{request.get_host()}"
+    data = {
+        "protocol": {
+            "name": "acp",
+            "version": "1.0.0"
+        },
+        "api_base_url": f"{base_url}/api",
+        "transports": ["http"],
+        "capabilities": {
+            "services": ["portfolio_booking"]
+        }
+    }
+    from django.http import JsonResponse
+    return JsonResponse(data)
