@@ -305,3 +305,16 @@ def oauth_discovery(request):
 def jwks_json(request):
     from django.http import JsonResponse
     return JsonResponse({"keys": []})
+
+def oauth_protected_resource(request):
+    base_url = f"{request.scheme}://{request.get_host()}"
+    data = {
+        "resource": base_url,
+        "authorization_servers": [
+            base_url
+        ],
+        "scopes_supported": ["read"],
+        "bearer_methods_supported": ["header"]
+    }
+    from django.http import JsonResponse
+    return JsonResponse(data)
