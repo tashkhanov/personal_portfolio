@@ -4,6 +4,7 @@ from . import views
 app_name = 'portfolio'
 
 urlpatterns = [
+    path('auth.md', views.auth_md, name='auth_md'),
     path('.well-known/api-catalog', views.api_catalog, name='api_catalog'),
     path('api/openapi.yaml', views.openapi_yaml, name='openapi_yaml'),
 

@@ -270,3 +270,21 @@ paths:
 """
     from django.http import HttpResponse
     return HttpResponse(yaml_content, content_type='application/yaml')
+
+def auth_md(request):
+    md = """# auth.md
+
+This site is a public portfolio. There are no private APIs or resources that require authentication for AI agents.
+All content is publicly available.
+
+## Agent Audience
+All AI agents, crawlers, and LLMs.
+
+## Registration
+No registration is required.
+
+## Authentication Methods
+None required.
+"""
+    from django.http import HttpResponse
+    return HttpResponse(md, content_type='text/markdown')
