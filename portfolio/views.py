@@ -528,3 +528,21 @@ def ucp_json(request):
     }
     from django.http import JsonResponse
     return JsonResponse(data)
+
+def x402_protected(request):
+    import json
+    import base64
+    from django.http import JsonResponse
+    
+    # Fake payment required object
+    pr = {
+        "x402Version": 2,
+        "amount": "1000",
+        "description": "Premium Agent Content"
+    }
+    pr_b64 = base64.b64encode(json.dumps(pr).encode('utf-8')).decode('utf-8')
+    
+    response = JsonResponse({"error": "Payment Required"})
+    response.status_code = 402
+    response['PAYMENT-REQUIRED'] = pr_b64
+    return response

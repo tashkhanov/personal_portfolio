@@ -4,6 +4,8 @@ from . import views
 app_name = 'portfolio'
 
 urlpatterns = [
+    path('api/x402-protected/', views.x402_protected, name='x402_protected'),
+
     path('.well-known/ucp', views.ucp_json, name='ucp_json'),
 
     path('openapi.json', views.openapi_json, name='openapi_json'),
