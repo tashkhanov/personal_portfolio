@@ -84,9 +84,10 @@ window.openProjectModal = function (id) {
                 type: 'fraction',
             },
             navigation: {
-                nextEl: swiperEl.parentElement.querySelector('.swiper-button-next'),
-                prevEl: swiperEl.parentElement.querySelector('.swiper-button-prev'),
+                nextEl: swiperEl.querySelector('.swiper-button-next'),
+                prevEl: swiperEl.querySelector('.swiper-button-prev'),
             },
+            
             grabCursor: true,
             spaceBetween: 30,
             loop: false

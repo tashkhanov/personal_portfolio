@@ -20,7 +20,7 @@
     <div class="prj-wrap">
         <div class="prj-grid">
             {% for project in all_projects %}
-            <a href="javascript:void(0);" onclick="openProjectModal('{{ project.id }}')" class="prj reveal">
+            <a style="cursor: pointer;" onclick="openProjectModal('{{ project.id }}')" class="prj reveal">
                 <div class="prj-img" style="background: {{ project.gradient|safe }}; position: relative; aspect-ratio: 16/9; height: auto;">
                     {% if project.image and project.image.name %}
                         <img src="{{ project.image.url }}" alt="{{ project.title }}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;object-position:top;">
