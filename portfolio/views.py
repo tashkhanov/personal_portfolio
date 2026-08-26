@@ -288,3 +288,20 @@ None required.
 """
     from django.http import HttpResponse
     return HttpResponse(md, content_type='text/markdown')
+
+def oauth_discovery(request):
+    base_url = f"{request.scheme}://{request.get_host()}"
+    data = {
+        "issuer": base_url,
+        "authorization_endpoint": f"{base_url}/auth.md",
+        "token_endpoint": f"{base_url}/auth.md",
+        "jwks_uri": f"{base_url}/.well-known/jwks.json",
+        "grant_types_supported": ["client_credentials"],
+        "response_types_supported": ["token"]
+    }
+    from django.http import JsonResponse
+    return JsonResponse(data)
+
+def jwks_json(request):
+    from django.http import JsonResponse
+    return JsonResponse({"keys": []})
