@@ -336,3 +336,29 @@ function protectMedia() {
 protectMedia();
 document.addEventListener('swup:contentReplaced', protectMedia);
 
+
+
+// AEO: WebMCP API Integration for Browser-based AI Agents
+document.addEventListener('DOMContentLoaded', () => {
+    if ('modelContext' in navigator) {
+        try {
+            const mcpController = new AbortController();
+            navigator.modelContext.registerTool({
+                name: "get_portfolio_info",
+                description: "Retrieves information about Ibrohim Asatkhanov's projects and services",
+                inputSchema: {
+                    type: "object",
+                    properties: {
+                        query: { type: "string", description: "What to search for" }
+                    }
+                },
+                execute: async (params) => {
+                    return { status: "success", info: "To view projects, navigate to the Projects section." };
+                }
+            }, { signal: mcpController.signal });
+            console.log("WebMCP tool 'get_portfolio_info' registered successfully.");
+        } catch (e) {
+            console.error("Failed to register WebMCP tool:", e);
+        }
+    }
+});
