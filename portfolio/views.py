@@ -318,3 +318,33 @@ def oauth_protected_resource(request):
     }
     from django.http import JsonResponse
     return JsonResponse(data)
+
+def agent_card_json(request):
+    base_url = f"{request.scheme}://{request.get_host()}"
+    data = {
+        "name": "Asatkhanov Portfolio Agent",
+        "version": "1.0.0",
+        "description": "Information agent for Ibrohim Asatkhanov's portfolio, skills, and services.",
+        "supportedInterfaces": [
+            {
+                "url": f"{base_url}/api/chat/",
+                "transport": "http"
+            }
+        ],
+        "capabilities": [
+            {
+                "id": "cap-info",
+                "name": "Portfolio Information",
+                "description": "Provides details about Ibrohim's projects and skills."
+            }
+        ],
+        "skills": [
+            {
+                "id": "skill-contact",
+                "name": "Contact Submission",
+                "description": "Can send a message to Ibrohim."
+            }
+        ]
+    }
+    from django.http import JsonResponse
+    return JsonResponse(data)
