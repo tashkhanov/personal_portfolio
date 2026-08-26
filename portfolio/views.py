@@ -344,6 +344,15 @@ def agent_card_json(request):
                 "name": "Contact Submission",
                 "description": "Can send a message to Ibrohim."
             }
+        ],
+        "extensions": [
+            {
+                "uri": "https://github.com/google-agentic-commerce/AP2/tree/v0.1.0",
+                "required": True,
+                "params": {
+                    "roles": ["merchant"]
+                }
+            }
         ]
     }
     from django.http import JsonResponse
