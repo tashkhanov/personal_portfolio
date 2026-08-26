@@ -4,7 +4,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-khan-portfolio-2026-secret-key'
 
-DEBUG = True
+import os
+DEBUG = (os.name == 'nt') # True on local Windows, False on Linux server
 
 
 ALLOWED_HOSTS = ['*']
