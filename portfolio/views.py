@@ -373,7 +373,6 @@ def agent_skills_index(request):
     base_url = f"{request.scheme}://{request.get_host()}"
     skill_url = f"{base_url}/.well-known/agent-skills/contact-skill.md"
     
-    # Recreate the exact skill content to hash it
     skill_content = """---
 name: contact-form
 description: Submits a contact request to the portfolio owner.

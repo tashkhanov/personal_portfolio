@@ -338,7 +338,6 @@ document.addEventListener('swup:contentReplaced', protectMedia);
 
 
 
-// AEO: WebMCP API Integration for Browser-based AI Agents
 document.addEventListener('DOMContentLoaded', () => {
     if ('modelContext' in navigator) {
         try {
