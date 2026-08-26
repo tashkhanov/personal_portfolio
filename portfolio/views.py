@@ -474,3 +474,36 @@ def acp_json(request):
     }
     from django.http import JsonResponse
     return JsonResponse(data)
+
+def openapi_json(request):
+    data = {
+        "openapi": "3.0.0",
+        "info": {
+            "title": "Asatkhanov Portfolio API",
+            "version": "1.0.0"
+        },
+        "x-service-info": {
+            "categories": ["portfolio", "freelance"]
+        },
+        "paths": {
+            "/api/book-consultation/": {
+                "post": {
+                    "summary": "Book a consultation session",
+                    "x-payment-info": {
+                        "intent": "charge",
+                        "method": "stripe",
+                        "amount": 5000,
+                        "currency": "USD",
+                        "description": "1 hour consultation"
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "OK"
+                        }
+                    }
+                }
+            }
+        }
+    }
+    from django.http import JsonResponse
+    return JsonResponse(data)

@@ -4,6 +4,8 @@ from . import views
 app_name = 'portfolio'
 
 urlpatterns = [
+    path('openapi.json', views.openapi_json, name='openapi_json'),
+
     path('.well-known/acp.json', views.acp_json, name='acp_json'),
 
     path('.well-known/http-message-signatures-directory', views.http_message_signatures_directory, name='http_message_signatures_directory'),
