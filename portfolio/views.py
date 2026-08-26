@@ -235,6 +235,20 @@ def ai_markdown(request):
 
 from django.http import JsonResponse
 
+
+# ==============================================================================
+# 🚨 AEO (Answer Engine Optimization) DUMMY ENDPOINTS 🚨
+# 
+# The following endpoints (api_catalog, oauth_discovery, mcp_server_card, 
+# x402_protected, etc.) were created PURELY to satisfy the AEO scanners 
+# (e.g., isitagentready.com) and publish metadata for AI agents.
+#
+# IMPORTANT FOR FUTURE DEVELOPERS OR AI AGENTS:
+# These do NOT contain real payment processing, OAuth servers, or security logic.
+# If you are implementing real payments (Stripe, Crypto) or real auth, DO NOT 
+# rely on these endpoints. You must implement actual security logic from scratch.
+# ==============================================================================
+
 def api_catalog(request):
     base_url = f"{request.scheme}://{request.get_host()}"
     data = {
