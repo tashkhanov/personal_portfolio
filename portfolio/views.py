@@ -230,3 +230,41 @@ def ai_markdown(request):
     md.append("## Contact\nEmail: contact@asatkhanov.uz\nTelegram: @khan710")
         
     return HttpResponse("\n".join(md), content_type="text/markdown")
+
+from django.http import JsonResponse
+
+def api_catalog(request):
+    base_url = f"{request.scheme}://{request.get_host()}"
+    data = {
+        "linkset": [
+            {
+                "anchor": f"{base_url}/api/",
+                "service-desc": [
+                    {"href": f"{base_url}/api/openapi.yaml", "type": "application/vnd.oai.openapi"}
+                ],
+                "service-doc": [
+                    {"href": f"{base_url}/api/docs/", "type": "text/html"}
+                ],
+                "status": [
+                    {"href": f"{base_url}/", "type": "text/html"}
+                ]
+            }
+        ]
+    }
+    return JsonResponse(data, content_type='application/linkset+json')
+
+def openapi_yaml(request):
+    yaml_content = """openapi: 3.0.0
+info:
+  title: Asatkhanov Portfolio API
+  version: 1.0.0
+paths:
+  /api/contact/:
+    post:
+      summary: Send a contact message
+      responses:
+        '200':
+          description: OK
+"""
+    from django.http import HttpResponse
+    return HttpResponse(yaml_content, content_type='application/yaml')

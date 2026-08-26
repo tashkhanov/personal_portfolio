@@ -4,6 +4,9 @@ from . import views
 app_name = 'portfolio'
 
 urlpatterns = [
+    path('.well-known/api-catalog', views.api_catalog, name='api_catalog'),
+    path('api/openapi.yaml', views.openapi_yaml, name='openapi_yaml'),
+
     path('robots.txt', views.robots_txt, name='robots_txt'),
     path('sitemap.xml', views.sitemap_xml, name='sitemap_xml'),
     path('llms.txt', views.ai_markdown, name='ai_markdown'),
