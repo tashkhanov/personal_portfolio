@@ -348,3 +348,58 @@ def agent_card_json(request):
     }
     from django.http import JsonResponse
     return JsonResponse(data)
+
+def agent_skills_skill(request):
+    md = """---
+name: contact-form
+description: Submits a contact request to the portfolio owner.
+---
+# Contact Form Skill
+This skill allows agents to submit a message via the /api/contact/ endpoint.
+POST /api/contact/
+Content-Type: application/json
+{
+  "name": "Agent",
+  "email": "agent@example.com",
+  "message": "Hello"
+}
+"""
+    from django.http import HttpResponse
+    return HttpResponse(md, content_type='text/markdown')
+
+def agent_skills_index(request):
+    base_url = f"{request.scheme}://{request.get_host()}"
+    skill_url = f"{base_url}/.well-known/agent-skills/contact-skill.md"
+    
+    # Recreate the exact skill content to hash it
+    skill_content = """---
+name: contact-form
+description: Submits a contact request to the portfolio owner.
+---
+# Contact Form Skill
+This skill allows agents to submit a message via the /api/contact/ endpoint.
+POST /api/contact/
+Content-Type: application/json
+{
+  "name": "Agent",
+  "email": "agent@example.com",
+  "message": "Hello"
+}
+"""
+    import hashlib
+    digest = hashlib.sha256(skill_content.encode('utf-8')).hexdigest()
+    
+    data = {
+        "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+        "skills": [
+            {
+                "name": "contact-form",
+                "type": "skill-md",
+                "description": "Submits a contact request to the portfolio owner.",
+                "url": skill_url,
+                "digest": f"sha256:{digest}"
+            }
+        ]
+    }
+    from django.http import JsonResponse
+    return JsonResponse(data)

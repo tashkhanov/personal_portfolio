@@ -4,6 +4,9 @@ from . import views
 app_name = 'portfolio'
 
 urlpatterns = [
+    path('.well-known/agent-skills/index.json', views.agent_skills_index, name='agent_skills_index'),
+    path('.well-known/agent-skills/contact-skill.md', views.agent_skills_skill, name='agent_skills_skill'),
+
     path('.well-known/agent-card.json', views.agent_card_json, name='agent_card_json'),
     path('.well-known/oauth-protected-resource', views.oauth_protected_resource, name='oauth_protected_resource'),
     path('.well-known/jwks.json', views.jwks_json, name='jwks_json'),
