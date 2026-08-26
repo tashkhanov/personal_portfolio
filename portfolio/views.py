@@ -507,3 +507,24 @@ def openapi_json(request):
     }
     from django.http import JsonResponse
     return JsonResponse(data)
+
+def ucp_json(request):
+    base_url = f"{request.scheme}://{request.get_host()}"
+    data = {
+        "protocol_version": "1.0",
+        "services": [
+            {
+                "id": "consultation",
+                "name": "Consultation",
+                "schema": f"{base_url}/openapi.json"
+            }
+        ],
+        "capabilities": [
+            "content_payment"
+        ],
+        "endpoints": {
+            "payment": f"{base_url}/api/book-consultation/"
+        }
+    }
+    from django.http import JsonResponse
+    return JsonResponse(data)
