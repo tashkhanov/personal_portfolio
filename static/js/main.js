@@ -17,23 +17,30 @@ if (themeBtn) {
 }
 
 // scroll events
+let scrollTicking = false;
 window.addEventListener('scroll', () => {
-    const s = window.scrollY;
-    const m = document.documentElement.scrollHeight - window.innerHeight;
-    const progress = document.getElementById('progress');
-    if (progress) progress.style.width = (s / m * 100) + '%';
+    if (!scrollTicking) {
+        window.requestAnimationFrame(() => {
+            const s = window.scrollY;
+            const m = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = document.getElementById('progress');
+            if (progress) progress.style.width = (s / m * 100) + '%';
 
-    const fab = document.getElementById('chatFab');
-    if (fab) {
-        if (s > 400) {
-            fab.classList.add('visible');
-        } else {
-            if (!fab.classList.contains('open')) {
-                fab.classList.remove('visible');
+            const fab = document.getElementById('chatFab');
+            if (fab) {
+                if (s > 400) {
+                    fab.classList.add('visible');
+                } else {
+                    if (!fab.classList.contains('open')) {
+                        fab.classList.remove('visible');
+                    }
+                }
             }
-        }
+            scrollTicking = false;
+        });
+        scrollTicking = true;
     }
-});
+}, { passive: true });
 
 // observer
 const ro = new IntersectionObserver(entries => {
