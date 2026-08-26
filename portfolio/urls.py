@@ -4,6 +4,8 @@ from . import views
 app_name = 'portfolio'
 
 urlpatterns = [
+    path('.well-known/http-message-signatures-directory', views.http_message_signatures_directory, name='http_message_signatures_directory'),
+
     path('.well-known/mcp/server-card.json', views.mcp_server_card, name='mcp_server_card'),
 
     path('.well-known/agent-skills/index.json', views.agent_skills_index, name='agent_skills_index'),
