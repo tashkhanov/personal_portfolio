@@ -147,10 +147,10 @@ def ai_chat(request):
         from .models import Project, Service, Skill
         
         projects = Project.objects.filter(is_active=True)
-        projects_text = "Мои проекты:\n" + "\n".join([f"— {p.title}: {p.description_ru}. Стек: {p.tags}. Статус: {p.status}." for p in projects])
+        projects_text = "Мои проекты:\n" + "\n".join([f"— {p.title}: {p.description_ru_ru}. Стек: {p.tags}. Статус: {p.status}." for p in projects])
         
         services = Service.objects.all()
-        services_text = "Мои услуги:\n" + "\n".join([f"— {s.title_ru}: {s.description_ru}." for s in services])
+        services_text = "Мои услуги:\n" + "\n".join([f"— {s.title_ru_ru}: {s.description_ru}." for s in services])
         
         skills = Skill.objects.all()
         skills_text = "Мой стек технологий: " + ", ".join([s.name for s in skills]) + "."
@@ -223,11 +223,11 @@ def ai_markdown(request):
     ]
     
     for p in Project.objects.all():
-        md.append(f"### {p.title}\n- Technologies: {p.technologies}\n- Description: {p.description}\n")
+        md.append(f"### {p.title}\n- Technologies: {p.tags}\n- Description: {p.description_ru}\n")
         
     md.append("## My Services")
     for s in Service.objects.all():
-        md.append(f"### {s.title}\n- Description: {s.short_description}\n")
+        md.append(f"### {s.title_ru}\n- Description: {s.description_ru}\n")
         
     md.append("## Contact\nEmail: contact@asatkhanov.uz\nTelegram: @khan710")
         
