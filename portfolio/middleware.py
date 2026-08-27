@@ -11,22 +11,22 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 class AnalyticsMiddleware(MiddlewareMixin):
-    def process_request(self, request):
-        # 1. Игнорируем запросы от админа (чтобы не трекать тебя)
+    def process_response(self, request, response):
+        if getattr(response, "status_code", 200) >= 400:
+            return response
+
         if hasattr(request, 'user') and request.user.is_authenticated and request.user.is_staff:
-            return
+            return response
             
         path = request.path
         
-        # 2. Игнорируем бесполезные технические пути
         if path.startswith('/admin/') or path.startswith('/static/') or path.startswith('/media/') or path.startswith('/__reload__/'):
-            return
+            return response
             
         if path in ['/favicon.ico', '/robots.txt', '/apple-touch-icon.png']:
-            return
+            return response
             
         try:
-            # 3. Извлекаем реальный IP от Cloudflare
             cf_connecting_ip = request.META.get('HTTP_CF_CONNECTING_IP')
             if cf_connecting_ip:
                 ip = cf_connecting_ip
@@ -40,11 +40,10 @@ class AnalyticsMiddleware(MiddlewareMixin):
             ua_string = request.META.get('HTTP_USER_AGENT', '')
             referer = request.META.get('HTTP_REFERER', '')
             
-            # 4. Проверяем на бота и ИГНОРИРУЕМ их
             if HAS_USER_AGENTS and ua_string:
                 user_agent = parse(ua_string)
                 if user_agent.is_bot:
-                    return  # Полностью игнорируем ботов
+                    return 
             
             if not request.session.session_key:
                 request.session.save()
@@ -80,6 +79,8 @@ class AnalyticsMiddleware(MiddlewareMixin):
         except Exception as e:
             logger.error(f"Analytics tracking failed: {e}")
             pass
+
+        return response
 
 from django.http import HttpResponse
 from .models import Project, Service
