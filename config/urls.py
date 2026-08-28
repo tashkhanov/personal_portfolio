@@ -5,7 +5,7 @@ from django.conf.urls.static import static
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('khan-secure-admin-710/', admin.site.urls),
     path('', include('portfolio.urls')),
 ]
 
