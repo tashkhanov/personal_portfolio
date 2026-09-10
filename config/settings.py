@@ -76,3 +76,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 ADMIN_SITE_HEADER = 'Khan Portfolio Admin'
 ADMIN_SITE_TITLE = 'Portfolio Admin'
 ADMIN_INDEX_TITLE = 'Управление сайтом'
+
+import os
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")

@@ -1,4 +1,5 @@
 import json
+from django.conf import settings
 import re
 import requests
 import os
@@ -181,7 +182,7 @@ def ai_chat(request):
             contents.append({"role": msg.get("role", "user"), "parts": [{"text": msg.get("text", "")}]})
 
         r = requests.post(
-            'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent?key=AIzaSyA3_xDtbS_0aGZ87lao6KH4ioDn48k37io',
+            f'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent?key={settings.GEMINI_API_KEY}',
             json={
                 "systemInstruction": {"parts": [{"text": context_prompt}]},
                 "contents": contents, 
