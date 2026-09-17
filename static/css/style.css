@@ -3789,3 +3789,384 @@ img {
         background: rgba(14, 15, 17, 0.95) !important; 
     }
 }
+
+/* ========================================
+   @media print — PDF резюме
+   ======================================== */
+@media print {
+    /* Скрываем всё лишнее */
+    nav,
+    footer,
+    .progress,
+    .chat-widget,
+    .chat-fab,
+    .ambient-orb,
+    .orb-1,
+    .orb-2,
+    .marquee-wrap,
+    .geo-panels,
+    .hero,
+    .btn1,
+    .btn2,
+    .btn-outline,
+    .action-btns,
+    .pagination,
+    .filters,
+    .all-projects,
+    .cta-section,
+    .related,
+    .gallery,
+    .hero-badge,
+    .scroll-ind,
+    .download-pdf-btn,
+    #downloadPdfBtn,
+    .about-actions,
+    .cert-overlay,
+    .read-more-btn,
+    .card-ov,
+    .prj-ov,
+    .lightbox,
+    .anti-screenshot-overlay,
+    .swiper-button-next,
+    .swiper-button-prev,
+    .swiper-pagination {
+        display: none !important;
+    }
+
+    /* Базовые настройки страницы */
+    html, body {
+        background: #fff !important;
+        color: #000 !important;
+        font-size: 11pt !important;
+        line-height: 1.5 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* Убираем фиксированное позиционирование и тени */
+    * {
+        box-shadow: none !important;
+        text-shadow: none !important;
+        animation: none !important;
+        transition: none !important;
+        transform: none !important;
+    }
+
+    /* Контейнеры на всю ширину без отступов */
+    section,
+    .about-page-hero,
+    .skills-section,
+    .experience-section,
+    .certificates-section,
+    .about-page-grid,
+    .about-portrait-col,
+    .about-bio-col,
+    .portrait-wrapper,
+    .detailed-skills-grid,
+    .d-skill-card,
+    .timeline,
+    .timeline-item,
+    .timeline-content,
+    .cert-grid,
+    .cert-card {
+        padding: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+    /* Секции: небольшие отступы между блоками */
+    .about-page-hero {
+        padding-top: 0 !important;
+        padding-bottom: 20px !important;
+    }
+    .skills-section,
+    .experience-section,
+    .certificates-section {
+        padding-top: 20px !important;
+        padding-bottom: 20px !important;
+        page-break-before: auto;
+    }
+
+    /* Заголовки секций */
+    .sh {
+        margin-bottom: 16px !important;
+        page-break-after: avoid;
+    }
+    .sh::before { display: none !important; }
+    .sl {
+        font-size: 9pt !important;
+        color: #666 !important;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 6px !important;
+    }
+    .st {
+        font-size: 16pt !important;
+        font-weight: 700;
+        color: #000 !important;
+        margin-bottom: 4px !important;
+    }
+
+    /* Портрет */
+    .portrait-img {
+        width: 140px !important;
+        height: 140px !important;
+        border-radius: 50% !important;
+        object-fit: cover !important;
+        border: 2px solid #ddd !important;
+        margin-bottom: 16px !important;
+    }
+    .portrait-placeholder {
+        width: 140px !important;
+        height: 140px !important;
+        border-radius: 50% !important;
+        border: 2px dashed #ddd !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin-bottom: 16px !important;
+    }
+    .portrait-glow { display: none !important; }
+
+    /* Имя и должность */
+    .about-bio-col h2 {
+        font-size: 20pt !important;
+        margin-bottom: 4px !important;
+    }
+    .about-bio-col h2 .hl { color: #000 !important; }
+    .about-bio-col h3 {
+        font-size: 11pt !important;
+        color: #555 !important;
+        font-weight: 500;
+        margin-bottom: 12px !important;
+    }
+
+    /* Bio текст */
+    .bio-content {
+        font-size: 10pt !important;
+        color: #333 !important;
+        line-height: 1.6 !important;
+        margin-bottom: 16px !important;
+    }
+
+    /* Ссылки в био — подчёркнутые, кликабельные */
+    .about-actions { display: flex !important; gap: 10px !important; flex-wrap: wrap !important; margin-top: 16px !important; }
+    #downloadPdfBtn, .download-pdf-btn { display: none !important; }
+    .about-actions a,
+    .bio-content a,
+    .clink,
+    .timeline-company a,
+    a[href^="http"],
+    a[href^="mailto:"],
+    a[href^="tel:"] {
+        color: #0066cc !important;
+        text-decoration: underline !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        margin-right: 12px !important;
+        margin-bottom: 8px !important;
+    }
+    .about-actions a [data-lucide],
+    .clink [data-lucide] {
+        width: 14px !important;
+        height: 14px !important;
+    }
+
+    /* Навыки */
+    .detailed-skills-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px !important;
+        margin-top: 12px !important;
+    }
+    .d-skill-card {
+        padding: 12px !important;
+        border: 1px solid #ddd !important;
+        border-radius: 6px !important;
+        background: #fafafa !important;
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+    .d-skill-icon {
+        display: none !important;
+    }
+    .d-skill-card h3 {
+        font-size: 10pt !important;
+        color: #000 !important;
+        margin-bottom: 6px !important;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 4px;
+    }
+    .d-skill-card p {
+        font-size: 9pt !important;
+        color: #444 !important;
+        line-height: 1.5 !important;
+        margin: 0 !important;
+    }
+
+    /* Опыт работы (таймлайн) */
+    .timeline {
+        padding-left: 20px !important;
+        margin-top: 12px !important;
+        border-left: 2px solid #ddd !important;
+    }
+    .timeline-item {
+        margin-bottom: 16px !important;
+        position: relative;
+        padding-left: 16px !important;
+    }
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -21px;
+        top: 4px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #000 !important;
+        border: 2px solid #fff !important;
+    }
+    .timeline-dot { display: none !important; }
+    .timeline-content {
+        padding: 0 !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+    .timeline-header {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: baseline !important;
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        margin-bottom: 4px !important;
+    }
+    .timeline-position {
+        font-size: 11pt !important;
+        font-weight: 600 !important;
+        color: #000 !important;
+        margin: 0 !important;
+    }
+    .timeline-period {
+        font-size: 9pt !important;
+        color: #666 !important;
+        background: #f0f0f0 !important;
+        padding: 2px 8px !important;
+        border-radius: 12px !important;
+        font-weight: 500 !important;
+        white-space: nowrap !important;
+    }
+    .timeline-company {
+        font-size: 10pt !important;
+        color: #333 !important;
+        margin-bottom: 8px !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+    }
+    .timeline-company [data-lucide] {
+        width: 14px !important;
+        height: 14px !important;
+        color: #666 !important;
+    }
+    .timeline-desc ul {
+        list-style: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    .timeline-desc li {
+        position: relative !important;
+        padding-left: 14px !important;
+        margin-bottom: 6px !important;
+        font-size: 9.5pt !important;
+        color: #333 !important;
+        line-height: 1.5 !important;
+    }
+    .timeline-desc li::before {
+        content: '—' !important;
+        position: absolute !important;
+        left: 0 !important;
+        color: #666 !important;
+        font-weight: bold !important;
+    }
+
+    /* Сертификаты */
+    .cert-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px !important;
+        margin-top: 12px !important;
+    }
+    .cert-card {
+        border: 1px solid #ddd !important;
+        border-radius: 6px !important;
+        overflow: hidden !important;
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+    .cert-img-wrap { position: relative !important; }
+    .cert-img-wrap img {
+        width: 100% !important;
+        height: auto !important;
+        display: block !important;
+    }
+    .cert-overlay { display: none !important; }
+    .cert-info { padding: 10px !important; }
+    .cert-title {
+        font-size: 10pt !important;
+        font-weight: 600 !important;
+        color: #000 !important;
+        margin-bottom: 6px !important;
+    }
+    .cert-meta-group { display: flex !important; flex-wrap: wrap !important; gap: 10px !important; font-size: 8.5pt !important; color: #666 !important; }
+    .cert-meta { display: flex !important; align-items: center !important; gap: 4px !important; }
+
+    /* Статистика (если нужна) */
+    .stats {
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 10px !important;
+        margin-top: 16px !important;
+        padding: 16px !important;
+        background: #fafafa !important;
+        border: 1px solid #ddd !important;
+        border-radius: 6px !important;
+    }
+    .stat { text-align: center !important; padding: 8px !important; }
+    .stat-v { font-size: 14pt !important; font-weight: 700 !important; color: #000 !important; }
+    .stat-l { font-size: 8pt !important; color: #666 !important; margin-top: 2px !important; text-transform: uppercase; letter-spacing: 1px; }
+
+    /* Управление разрывами страниц */
+    .timeline-item,
+    .d-skill-card,
+    .cert-card,
+    .stat {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+    .experience-section,
+    .skills-section,
+    .certificates-section {
+        page-break-before: auto;
+    }
+    h2, h3, .st, .timeline-position {
+        page-break-after: avoid;
+    }
+
+    /* Ссылки после содержимого (опционально) */
+    a[href^="http"]::after,
+    a[href^="mailto:"]::after {
+        content: " (" attr(href) ")" !important;
+        font-size: 8pt !important;
+        color: #999 !important;
+        text-decoration: none !important;
+    }
+}
