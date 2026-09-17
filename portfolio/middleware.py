@@ -19,6 +19,7 @@ class AnalyticsMiddleware(MiddlewareMixin):
             return response
             
         path = request.path
+
         
         if path.startswith('/admin/') or path.startswith('/static/') or path.startswith('/media/') or path.startswith('/__reload__/'):
             return response
@@ -37,6 +38,7 @@ class AnalyticsMiddleware(MiddlewareMixin):
                 else:
                     ip = request.META.get('REMOTE_ADDR')
                 
+            
             ua_string = request.META.get('HTTP_USER_AGENT', '')
             referer = request.META.get('HTTP_REFERER', '')
             
