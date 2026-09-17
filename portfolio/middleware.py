@@ -43,7 +43,7 @@ class AnalyticsMiddleware(MiddlewareMixin):
             if HAS_USER_AGENTS and ua_string:
                 user_agent = parse(ua_string)
                 if user_agent.is_bot:
-                    return 
+                    return response
             
             if not request.session.session_key:
                 request.session.save()
