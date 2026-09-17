@@ -85,3 +85,7 @@ except ImportError:
     pass
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+
+# Cloudflare Proxy Settings
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
