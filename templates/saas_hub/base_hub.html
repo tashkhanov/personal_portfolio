@@ -6,10 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}SaaS Command Center | Asatkhanov Technologies{% endblock %}</title>
     
-    <!-- Google Fonts -->
+    <!-- Google Fonts: Manrope & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -31,11 +31,11 @@
 </head>
 <body>
 
-    <!-- Header Navigation -->
+    <!-- Header Navigation (Luxury Glass Bar) -->
     <header class="hub-nav">
         <a href="{% if request.get_host|slice:':4' == 'hub.' %}/{% else %}{% url 'saas_hub:dashboard' %}{% endif %}" class="hub-brand">
             <div class="hub-brand-logo">
-                <i data-lucide="layers" style="width: 20px; height: 20px; color: #38bdf8;"></i>
+                <i data-lucide="layers" style="width: 22px; height: 22px; color: #38bdf8;"></i>
             </div>
             <div class="hub-brand-text">
                 <span class="hub-brand-title">KHAN &bull; SaaS Hub</span>
@@ -45,13 +45,25 @@
 
         {% if user.is_authenticated %}
         <div class="hub-nav-actions">
-            <div class="hub-user-pill">
-                <span class="hub-user-dot"></span>
-                <span>{{ user.username }} (Шеф / Creator)</span>
+            <!-- System Health Beacon -->
+            <div class="hub-status-beacon" title="Все микросервисы и телеметрия заведений функционируют в штатном режиме">
+                <span class="pulse-beacon-dot"></span>
+                <span>Сеть в норме &bull; Live Cloud Sync</span>
             </div>
-            <a href="{% if request.get_host|slice:':4' == 'hub.' %}/logout/{% else %}{% url 'saas_hub:logout' %}{% endif %}" class="btn-hub-logout">
-                <i data-lucide="log-out" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i>
-                Выйти
+
+            <!-- User Creator Identity Badge -->
+            <div class="hub-user-pill">
+                <div class="hub-user-avatar">IA</div>
+                <div style="display: flex; flex-direction: column; text-align: left; line-height: 1.2;">
+                    <span style="font-weight: 700; color: #ffffff; font-size: 0.82rem;">{{ user.username }}</span>
+                    <span style="font-size: 0.7rem; color: #38bdf8;">Шеф &bull; Создатель</span>
+                </div>
+            </div>
+
+            <!-- Logout Button -->
+            <a href="{% if request.get_host|slice:':4' == 'hub.' %}/logout/{% else %}{% url 'saas_hub:logout' %}{% endif %}" class="btn-hub-logout" title="Выйти из сессии суперадминистратора">
+                <i data-lucide="log-out" style="width: 14px; height: 14px;"></i>
+                <span>Выйти</span>
             </a>
         </div>
         {% endif %}

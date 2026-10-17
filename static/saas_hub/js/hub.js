@@ -197,3 +197,42 @@ document.addEventListener('DOMContentLoaded', () => {
         window.lucide.createIcons();
     }
 });
+
+// Dynamic Instant Filter & Search for Salons
+let currentStatusFilter = 'all';
+
+function setFilter(status, elem) {
+    currentStatusFilter = status;
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    if (elem) elem.classList.add('active');
+    filterTenants();
+}
+
+function filterTenants() {
+    const input = document.getElementById('hubSearchInput');
+    const query = (input ? input.value : '').toLowerCase().trim();
+    const cards = document.querySelectorAll('.tenant-card');
+
+    cards.forEach(card => {
+        const name = (card.dataset.name || '').toLowerCase();
+        const slug = (card.dataset.slug || '').toLowerCase();
+        const owner = (card.dataset.owner || '').toLowerCase();
+        const status = (card.dataset.status || '').toUpperCase();
+
+        const matchesQuery = !query || name.includes(query) || slug.includes(query) || owner.includes(query);
+        let matchesStatus = true;
+        if (currentStatusFilter === 'active') {
+            matchesStatus = status === 'ACTIVE';
+        } else if (currentStatusFilter === 'warning') {
+            matchesStatus = status === 'WARNING' || status === 'GRACE_PERIOD';
+        } else if (currentStatusFilter === 'locked') {
+            matchesStatus = status === 'LOCKED';
+        }
+
+        if (matchesQuery && matchesStatus) {
+            card.style.display = 'flex';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
