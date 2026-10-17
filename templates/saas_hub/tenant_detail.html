@@ -5,29 +5,29 @@
 {% block content %}
 
 <!-- Header & Quick Jump Links -->
-<div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
-    <a href="{% if request.get_host|slice:':4' == 'hub.' %}/{% else %}{% url 'saas_hub:dashboard' %}{% endif %}" class="btn btn-secondary" style="padding: 9px 16px;">
-        <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i>
+<div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+    <a href="{% if request.get_host|slice:':4' == 'hub.' %}/{% else %}{% url 'saas_hub:dashboard' %}{% endif %}" class="btn btn-secondary">
+        <i data-lucide="arrow-left" style="width: 15px; height: 15px;"></i>
         <span>Назад в Дашборд</span>
     </a>
 
-    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-        <!-- Продлить подписку -->
-        <button class="btn btn-extend" onclick="openExtendModal({{ tenant.id }}, '{{ tenant.name|escapejs }}', {{ tenant.monthly_fee }})">
-            <i data-lucide="plus-circle" style="width: 16px; height: 16px;"></i>
+    <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+        <!-- Продлить подписку (White capsule pill matching asatkhanov.uz) -->
+        <button class="btn btn-primary" style="flex: none !important; width: auto !important;" onclick="openExtendModal({{ tenant.id }}, '{{ tenant.name|escapejs }}', {{ tenant.monthly_fee }})">
+            <i data-lucide="plus-circle" style="width: 15px; height: 15px;"></i>
             <span>+30 дней подписки</span>
         </button>
 
         <!-- Kill Switch -->
         {% if tenant.is_active and tenant.subscription_status != 'LOCKED' %}
-        <button class="btn btn-killswitch" id="ks-btn-{{ tenant.id }}" onclick="toggleKillswitch({{ tenant.id }}, true, '{{ tenant.name|escapejs }}')">
-            <i data-lucide="power" style="width: 16px; height: 16px;"></i>
+        <button class="btn btn-killswitch" id="ks-btn-{{ tenant.id }}" style="flex: none !important; width: auto !important;" onclick="toggleKillswitch({{ tenant.id }}, true, '{{ tenant.name|escapejs }}')">
+            <i data-lucide="power" style="width: 15px; height: 15px;"></i>
             <span>Kill Switch (Заблокировать)</span>
         </button>
         {% else %}
-        <button class="btn btn-killswitch active-mode" id="ks-btn-{{ tenant.id }}" onclick="toggleKillswitch({{ tenant.id }}, false, '{{ tenant.name|escapejs }}')">
-            <i data-lucide="check-circle" style="width: 16px; height: 16px;"></i>
-            <span>Разблокировать заведение</span>
+        <button class="btn btn-killswitch active-mode" id="ks-btn-{{ tenant.id }}" style="flex: none !important; width: auto !important;" onclick="toggleKillswitch({{ tenant.id }}, false, '{{ tenant.name|escapejs }}')">
+            <i data-lucide="check-circle" style="width: 15px; height: 15px;"></i>
+            <span>Разблокировать</span>
         </button>
         {% endif %}
     </div>
@@ -35,41 +35,41 @@
 
 <!-- Salon Overview Hero Header Card -->
 <div class="tenant-hero-card">
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 24px;">
-        <div style="display: flex; align-items: center; gap: 18px;">
-            <div class="tenant-avatar" style="width: 58px; height: 58px; font-size: 1.4rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px;">
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <div class="tenant-avatar" style="width: 50px; height: 50px; font-size: 1.2rem; border-radius: var(--radius-sm);">
                 {{ tenant.name|slice:":2"|upper }}
             </div>
             <div>
-                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 6px; flex-wrap: wrap;">
-                    <h1 style="font-size: 1.9rem; font-weight: 800; letter-spacing: -0.03em; color: #ffffff;">{{ tenant.name }}</h1>
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px; flex-wrap: wrap;">
+                    <h1 style="font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; color: var(--t1);">{{ tenant.name }}</h1>
                     <span class="badge {{ tenant.status_badge_class }}">{{ tenant.status_display }}</span>
                     <span class="ping-pill {% if remote_status.online %}online{% else %}offline{% endif %}">
                         <span class="ping-dot"></span>
                         <span>{% if remote_status.online %}Online ({{ remote_status.latency_ms }} мс){% else %}Offline{% endif %}</span>
                     </span>
                 </div>
-                <div class="tenant-meta-pills" style="gap: 12px; font-size: 0.88rem;">
-                    <span>Slug: <code class="tenant-slug" style="color: var(--color-cyan);">{{ tenant.slug }}</code></span>
+                <div class="tenant-meta-pills" style="gap: 10px; font-size: 0.82rem; color: var(--t2);">
+                    <span>Slug: <code class="tenant-slug">{{ tenant.slug }}</code></span>
                     {% if tenant.bot_username %}
-                        <a href="https://t.me/{{ tenant.bot_username|cut:'@' }}" target="_blank" class="tenant-bot-link" style="font-size: 0.86rem;">
-                            <i data-lucide="send" style="width: 13px; height: 13px;"></i>
+                        <a href="https://t.me/{{ tenant.bot_username|cut:'@' }}" target="_blank" class="tenant-bot-link">
+                            <i data-lucide="send" style="width: 12px; height: 12px;"></i>
                             <span>{{ tenant.bot_username }}</span>
                         </a>
                     {% endif %}
-                    <span style="color: var(--text-muted);">&bull;</span>
-                    <span style="color: var(--text-secondary);">Шеф: <strong style="color: #ffffff;">{{ tenant.owner_name|default:"Шеф" }}</strong></span>
-                    <span style="color: var(--text-muted);">&bull;</span>
-                    <span style="color: var(--text-secondary);">Тел: <strong style="color: #ffffff;">{{ tenant.phone|default:"—" }}</strong></span>
+                    <span>&bull;</span>
+                    <span>Шеф: <strong style="color: var(--t1);">{{ tenant.owner_name|default:"Шеф" }}</strong></span>
+                    <span>&bull;</span>
+                    <span>Тел: <strong style="color: var(--t1);">{{ tenant.phone|default:"—" }}</strong></span>
                 </div>
             </div>
         </div>
 
-        <div style="text-align: right; background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 14px 20px;">
-            <div style="font-size: 0.74rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em;">Тариф лицензии</div>
-            <div style="font-size: 1.7rem; font-weight: 800; color: var(--color-emerald); letter-spacing: -0.02em;">{{ tenant.formatted_monthly_fee }}/мес</div>
-            <div style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 4px;">
-                Оплачено до: <strong style="color: #ffffff;">{{ tenant.subscription_expires_at|date:"d.m.Y" }}</strong> ({{ tenant.days_left }} дн.)
+        <div style="text-align: right; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 18px;">
+            <div style="font-size: 0.7rem; color: var(--t3); text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em;">Тариф лицензии</div>
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--t1); letter-spacing: -0.02em;">{{ tenant.formatted_monthly_fee }}/мес</div>
+            <div style="font-size: 0.78rem; color: var(--t2); margin-top: 2px;">
+                Оплачено до: <strong style="color: var(--t1);">{{ tenant.subscription_expires_at|date:"d.m.Y" }}</strong> ({{ tenant.days_left }} дн.)
             </div>
         </div>
     </div>
@@ -78,72 +78,73 @@
 <!-- ======================================================== -->
 <!-- ПРЯМЫЕ ВХОДЫ В МЕНЮ ЗАВЕДЕНИЯ (СО ВСЕМИ ПРАВАМИ СОЗДАТЕЛЯ) -->
 <!-- ======================================================== -->
-<div class="section-header" style="margin-bottom: 18px;">
+<div class="section-header" style="margin-bottom: 16px;">
     <div class="section-title">
-        <i data-lucide="external-link" style="width: 22px; height: 22px; color: var(--color-cyan);"></i>
-        <span>Сквозной вход в меню заведения (100% Super-Admin Rights)</span>
+        <i data-lucide="external-link" style="width: 18px; height: 18px; color: var(--t2);"></i>
+        <span>Сквозной вход в меню заведения (Creator Access)</span>
     </div>
 </div>
 
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 22px; margin-bottom: 40px;">
+<!-- 3 Minimalist Cards Matching Portfolio Style -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 32px;">
     
     <!-- 1. Клиентская запись (Как обычный тип) -->
-    <a href="{{ tenant.api_base_url }}/book?token={{ tenant.api_secret_token }}" target="_blank" class="giant-access-card client">
+    <a href="{{ tenant.api_base_url }}/book?token={{ tenant.api_secret_token }}" target="_blank" class="giant-access-card">
         <div>
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
-                <div class="giant-access-icon" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">
-                    <i data-lucide="user-check" style="width: 26px; height: 26px;"></i>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px;">
+                <div class="giant-access-icon">
+                    <i data-lucide="user-check" style="width: 20px; height: 20px;"></i>
                 </div>
-                <span class="badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border-color: rgba(56, 189, 248, 0.3);">Клиентский WebApp</span>
+                <span class="giant-badge">Клиентский WebApp</span>
             </div>
-            <h3 style="font-size: 1.35rem; font-weight: 800; color: #ffffff; margin-bottom: 8px;">Онлайн-запись клиентов</h3>
-            <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.55; margin-bottom: 22px;">
+            <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--t1); margin-bottom: 6px;">Онлайн-запись клиентов</h3>
+            <p style="font-size: 0.84rem; color: var(--t2); line-height: 1.5; margin-bottom: 18px;">
                 Войти в роли обычного клиента и протестировать реальный WebApp: выбор филиала, каталога стрижек, свободных мастеров, тайм-слотов и оформление записи.
             </p>
         </div>
-        <div style="display: flex; align-items: center; gap: 8px; color: #38bdf8; font-size: 0.9rem; font-weight: 800;">
+        <div style="display: flex; align-items: center; gap: 6px; color: var(--t1); font-size: 0.84rem; font-weight: 600;">
             <span>Открыть клиентское меню</span>
-            <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i>
+            <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
         </div>
     </a>
 
     <!-- 2. Панель администратора Brohouse Pro -->
-    <a href="{{ tenant.api_base_url }}/admin?token={{ tenant.api_secret_token }}" target="_blank" class="giant-access-card admin">
+    <a href="{{ tenant.api_base_url }}/admin?token={{ tenant.api_secret_token }}" target="_blank" class="giant-access-card">
         <div>
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
-                <div class="giant-access-icon" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3);">
-                    <i data-lucide="crown" style="width: 26px; height: 26px;"></i>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px;">
+                <div class="giant-access-icon">
+                    <i data-lucide="crown" style="width: 20px; height: 20px;"></i>
                 </div>
-                <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b; border-color: rgba(245, 158, 11, 0.3);">Brohouse Pro</span>
+                <span class="giant-badge">Brohouse Pro</span>
             </div>
-            <h3 style="font-size: 1.35rem; font-weight: 800; color: #ffffff; margin-bottom: 8px;">Панель Brohouse Pro</h3>
-            <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.55; margin-bottom: 22px;">
+            <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--t1); margin-bottom: 6px;">Панель Brohouse Pro</h3>
+            <p style="font-size: 0.84rem; color: var(--t2); line-height: 1.5; margin-bottom: 18px;">
                 Родная панель управления салоном со всеми правами Создателя: журнал записей клиентов, переключение смен барберов, редактирование прайс-листа и услуг.
             </p>
         </div>
-        <div style="display: flex; align-items: center; gap: 8px; color: #f59e0b; font-size: 0.9rem; font-weight: 800;">
+        <div style="display: flex; align-items: center; gap: 6px; color: var(--t1); font-size: 0.84rem; font-weight: 600;">
             <span>Войти в админку салона</span>
-            <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i>
+            <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
         </div>
     </a>
 
     <!-- 3. Кабинет мастера -->
-    <a href="{{ tenant.api_base_url }}/barber?token={{ tenant.api_secret_token }}" target="_blank" class="giant-access-card barber">
+    <a href="{{ tenant.api_base_url }}/barber?token={{ tenant.api_secret_token }}" target="_blank" class="giant-access-card">
         <div>
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
-                <div class="giant-access-icon" style="background: rgba(16, 185, 129, 0.15); color: var(--color-emerald); border: 1px solid rgba(16, 185, 129, 0.3);">
-                    <i data-lucide="scissors" style="width: 26px; height: 26px;"></i>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px;">
+                <div class="giant-access-icon">
+                    <i data-lucide="scissors" style="width: 20px; height: 20px;"></i>
                 </div>
-                <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: var(--color-emerald); border-color: rgba(16, 185, 129, 0.3);">Кабинет Мастера</span>
+                <span class="giant-badge">Кабинет Мастера</span>
             </div>
-            <h3 style="font-size: 1.35rem; font-weight: 800; color: #ffffff; margin-bottom: 8px;">Кабинет мастера</h3>
-            <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.55; margin-bottom: 22px;">
+            <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--t1); margin-bottom: 6px;">Кабинет мастера</h3>
+            <p style="font-size: 0.84rem; color: var(--t2); line-height: 1.5; margin-bottom: 18px;">
                 Индивидуальное рабочее место барбера: просмотр личного расписания на день, броней клиентов и завершение выполненных стрижек.
             </p>
         </div>
-        <div style="display: flex; align-items: center; gap: 8px; color: var(--color-emerald); font-size: 0.9rem; font-weight: 800;">
+        <div style="display: flex; align-items: center; gap: 6px; color: var(--t1); font-size: 0.84rem; font-weight: 600;">
             <span>Открыть кабинет мастера</span>
-            <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i>
+            <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
         </div>
     </a>
 
@@ -152,11 +153,11 @@
 <!-- Tab Navigation Menu -->
 <div class="tab-navigation-bar">
     <button class="tab-btn active" onclick="switchDetailTab('billing')">
-        <i data-lucide="credit-card" style="width: 16px; height: 16px;"></i>
+        <i data-lucide="credit-card" style="width: 15px; height: 15px;"></i>
         <span>Биллинг и история оплат ({{ payments.count }})</span>
     </button>
     <button class="tab-btn" onclick="switchDetailTab('settings')">
-        <i data-lucide="settings" style="width: 16px; height: 16px;"></i>
+        <i data-lucide="settings" style="width: 15px; height: 15px;"></i>
         <span>Настройки заведения и реквизиты</span>
     </button>
 </div>
@@ -165,15 +166,18 @@
 <!-- ВКЛАДКА 1: БИЛЛИНГ И ИНВОЙСЫ             -->
 <!-- ========================================== -->
 <div id="tab-billing" class="detail-tab-pane active">
-    <div class="section-header" style="margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center;">
-        <div class="section-title">
-            <i data-lucide="receipt" style="width: 20px; height: 20px; color: var(--color-emerald);"></i>
+    <!-- Header with strictly non-stretching white pill button -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 16px;">
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 1.05rem; font-weight: 700; color: var(--t1);">
+            <i data-lucide="receipt" style="width: 18px; height: 18px; color: var(--t2);"></i>
             <span>История оплат и выставленные инвойсы</span>
         </div>
-        <button class="btn btn-extend" onclick="openExtendModal({{ tenant.id }}, '{{ tenant.name|escapejs }}', {{ tenant.monthly_fee }})">
-            <i data-lucide="plus-circle" style="width: 16px; height: 16px;"></i>
-            <span>Зафиксировать оплату (+30 дн)</span>
-        </button>
+        <div>
+            <button class="btn btn-primary" style="flex: none !important; width: auto !important; display: inline-flex !important;" onclick="openExtendModal({{ tenant.id }}, '{{ tenant.name|escapejs }}', {{ tenant.monthly_fee }})">
+                <i data-lucide="plus-circle" style="width: 15px; height: 15px;"></i>
+                <span>Зафиксировать оплату (+30 дн)</span>
+            </button>
+        </div>
     </div>
 
     <div class="table-wrap">
@@ -192,35 +196,33 @@
             <tbody>
                 {% for payment in payments %}
                 <tr>
-                    <td style="color: var(--text-muted); font-size: 0.84rem;">{{ payment.paid_at|date:"d.m.Y H:i" }}</td>
-                    <td style="color: var(--color-emerald); font-weight: 800; font-size: 0.95rem;">+{{ payment.formatted_amount }}</td>
+                    <td style="color: var(--t2); font-size: 0.82rem;">{{ payment.paid_at|date:"d.m.Y H:i" }}</td>
+                    <td style="color: var(--t1); font-weight: 700; font-size: 0.9rem;">+{{ payment.formatted_amount }}</td>
                     <td>
-                        <span style="display: inline-flex; align-items: center; gap: 4px; font-size: 0.82rem; color: var(--text-secondary);">
-                            <i data-lucide="calendar" style="width: 13px; height: 13px; color: var(--color-cyan);"></i>
+                        <span style="font-size: 0.8rem; color: var(--t2);">
                             +{{ payment.days_added }} дн.
                         </span>
                     </td>
                     <td>
-                        <span style="text-transform: uppercase; font-size: 0.76rem; font-weight: 700; background: rgba(255,255,255,0.05); padding: 3px 8px; border-radius: 4px; border: 1px solid var(--border-subtle);">
+                        <span style="text-transform: uppercase; font-size: 0.72rem; font-weight: 600; background: var(--bg2); padding: 3px 8px; border-radius: 4px; border: 1px solid var(--border);">
                             {{ payment.payment_method }}
                         </span>
                     </td>
-                    <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-muted);">{{ payment.receipt_number|default:"—" }}</td>
-                    <td style="color: var(--text-secondary); font-size: 0.85rem;">{{ payment.comment|default:"—" }}</td>
+                    <td style="font-family: monospace; font-size: 0.78rem; color: var(--t3);">{{ payment.receipt_number|default:"—" }}</td>
+                    <td style="color: var(--t2); font-size: 0.82rem;">{{ payment.comment|default:"—" }}</td>
                     <td>
                         <a href="{% if request.get_host|slice:':4' == 'hub.' %}/tenant/{{ tenant.slug }}/invoice/{{ payment.id }}/{% else %}{% url 'saas_hub:invoice_detail' tenant.slug payment.id %}{% endif %}" 
                            class="btn btn-secondary" 
-                           style="padding: 5px 12px; font-size: 0.78rem;" 
-                           target="_blank"
-                           title="Сформировать печатный инвойс для заведения">
-                            <i data-lucide="printer" style="width: 13px; height: 13px;"></i>
+                           style="padding: 4px 12px; font-size: 0.76rem;" 
+                           target="_blank">
+                            <i data-lucide="printer" style="width: 12px; height: 12px;"></i>
                             <span>Инвойс</span>
                         </a>
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                    <td colspan="7" style="text-align: center; padding: 36px; color: var(--t3);">
                         Транзакций пока не зафиксировано.
                     </td>
                 </tr>
@@ -234,21 +236,21 @@
 <!-- ВКЛАДКА 2: НАСТРОЙКИ ЗАВЕДЕНИЯ           -->
 <!-- ========================================== -->
 <div id="tab-settings" class="detail-tab-pane">
-    <div class="section-header" style="margin-bottom: 18px;">
+    <div class="section-header" style="margin-bottom: 16px;">
         <div class="section-title">
-            <i data-lucide="sliders" style="width: 20px; height: 20px; color: #ffffff;"></i>
+            <i data-lucide="sliders" style="width: 18px; height: 18px; color: var(--t2);"></i>
             <span>Параметры заведения и реквизиты подключения</span>
         </div>
     </div>
 
-    <div class="kpi-card" style="max-width: 760px; padding: 32px;">
+    <div class="kpi-card" style="max-width: 720px; padding: 28px;">
         <form onsubmit="submitTenantSettings(event)">
             <div class="form-group">
                 <label class="form-label">Название заведения:</label>
                 <input type="text" id="settingName" class="form-control" value="{{ tenant.name }}" required>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
                 <div class="form-group">
                     <label class="form-label">Телефон заведения:</label>
                     <input type="text" id="settingPhone" class="form-control" value="{{ tenant.phone }}" required>
@@ -259,7 +261,7 @@
                 </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
                 <div class="form-group">
                     <label class="form-label">Абонплата в месяц (сум):</label>
                     <input type="number" id="settingFee" class="form-control" value="{{ tenant.monthly_fee }}" required>
@@ -290,9 +292,9 @@
                 <textarea id="settingNotes" class="form-control" rows="3">{{ tenant.notes }}</textarea>
             </div>
 
-            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
-                <button type="submit" id="btnSaveSettings" class="btn btn-primary" style="padding: 12px 26px;">
-                    <i data-lucide="save" style="width: 16px; height: 16px;"></i>
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                <button type="submit" id="btnSaveSettings" class="btn btn-primary" style="padding: 10px 22px;">
+                    <i data-lucide="save" style="width: 15px; height: 15px;"></i>
                     <span>Сохранить параметры</span>
                 </button>
             </div>
@@ -340,9 +342,9 @@
                 <input type="text" id="extendComment" class="form-control" placeholder="Оплата подписки">
             </div>
 
-            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
+            <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px;">
                 <button type="button" class="btn btn-secondary" onclick="closeExtendModal()">Отмена</button>
-                <button type="submit" id="btnSubmitExtend" class="btn btn-extend">
+                <button type="submit" id="btnSubmitExtend" class="btn btn-primary">
                     <i data-lucide="check" style="width: 15px; height: 15px;"></i>
                     Зафиксировать оплату
                 </button>
