@@ -16,9 +16,36 @@ class ServiceFeatureInline(admin.TabularInline):
 class SiteSettingsAdmin(admin.ModelAdmin):
     fieldsets = (
         ('Основное', {'fields': ('name', 'title', 'subtitle', 'is_available', 'hero_text', 'about_text', 'resume', 'portrait', 'og_image', 'about_full_text')}),
+        ('Брендинг и логотипы', {
+            'fields': (
+                ('logo', 'logo_preview'),
+                ('logo_footer', 'logo_footer_preview'),
+                ('favicon', 'favicon_preview')
+            ),
+            'description': 'Фирменные логотипы и favicon. Файлы сохраняются в media и отображаются на сайте сразу после сохранения без необходимости ручной сборки статики.'
+        }),
         ('Контакты', {'fields': ('kwork_username', 'kwork_url', 'telegram_username', 'telegram_url', 'email', 'github_url')}),
         ('Telegram интеграция', {'fields': ('telegram_bot_token', 'telegram_chat_id'), 'description': 'Для получения сообщений с формы обратной связи'}),
     )
+    readonly_fields = ['logo_preview', 'logo_footer_preview', 'favicon_preview']
+
+    def logo_preview(self, obj):
+        if obj and obj.logo:
+            return format_html('<img src="{}" style="max-height: 40px; max-width: 150px; background: #16181d; padding: 6px 12px; border-radius: 6px; border: 1px solid #333;" />', obj.logo.url)
+        return "Не загружен"
+    logo_preview.short_description = "Превью логотипа"
+
+    def logo_footer_preview(self, obj):
+        if obj and obj.logo_footer:
+            return format_html('<img src="{}" style="max-height: 40px; max-width: 150px; background: #16181d; padding: 6px 12px; border-radius: 6px; border: 1px solid #333;" />', obj.logo_footer.url)
+        return "Не загружен"
+    logo_footer_preview.short_description = "Превью логотипа футера"
+
+    def favicon_preview(self, obj):
+        if obj and obj.favicon:
+            return format_html('<img src="{}" style="max-height: 32px; max-width: 32px; background: #16181d; padding: 4px; border-radius: 6px; border: 1px solid #333;" />', obj.favicon.url)
+        return "Не загружен"
+    favicon_preview.short_description = "Превью Favicon"
 
     def has_add_permission(self, request):
         return not SiteSettings.objects.exists()

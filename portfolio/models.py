@@ -104,6 +104,12 @@ class SiteSettings(models.Model):
     resume = models.FileField('Резюме', upload_to='resume/', blank=True, null=True, help_text='PDF файл резюме для скачивания с главной страницы')
     portrait = models.ImageField('Портрет', upload_to='about/', blank=True, null=True, help_text='Фото для страницы "Обо мне"')
     about_full_text = models.TextField('Развернутый текст обо мне', default='Тут будет подробная история моего пути...', help_text='Поддерживает HTML-теги для форматирования')
+    
+    # Брендинг и логотипы
+    logo = models.FileField('Логотип (SVG/PNG)', upload_to='branding/', blank=True, null=True, help_text='Основной логотип для шапки сайта (SVG, PNG, WebP)')
+    logo_footer = models.FileField('Логотип для футера (SVG/PNG)', upload_to='branding/', blank=True, null=True, help_text='Логотип с дескриптором для подвала сайта')
+    favicon = models.FileField('Favicon (ICO/PNG/SVG)', upload_to='branding/', blank=True, null=True, help_text='Иконка для вкладки браузера (.ico, .png, .svg)')
+
 
     class Meta:
         verbose_name = 'Настройки сайта'
