@@ -1,0 +1,332 @@
+{% extends 'saas_hub/base_hub.html' %}
+
+{% block title %}Командный Центр SaaS | hub.asatkhanov.uz{% endblock %}
+
+{% block content %}
+
+<!-- Executive KPI Strip -->
+<div class="kpi-grid">
+    <div class="kpi-card mrr">
+        <div class="kpi-header">
+            <span class="kpi-title">Сеть MRR (Выручка)</span>
+            <div class="kpi-icon-wrap">
+                <i data-lucide="trending-up" style="width: 18px; height: 18px;"></i>
+            </div>
+        </div>
+        <div class="kpi-value">{{ metrics.formatted_mrr }}</div>
+        <div class="kpi-subtext">Ежемесячный потенциальный доход сети</div>
+    </div>
+
+    <div class="kpi-card active">
+        <div class="kpi-header">
+            <span class="kpi-title">Собрано за месяц</span>
+            <div class="kpi-icon-wrap">
+                <i data-lucide="wallet" style="width: 18px; height: 18px;"></i>
+            </div>
+        </div>
+        <div class="kpi-value">{{ metrics.formatted_collected_month }}</div>
+        <div class="kpi-subtext">Оплаченные подписки в этом месяце</div>
+    </div>
+
+    <div class="kpi-card warning">
+        <div class="kpi-header">
+            <span class="kpi-title">Клиенты сети</span>
+            <div class="kpi-icon-wrap">
+                <i data-lucide="store" style="width: 18px; height: 18px;"></i>
+            </div>
+        </div>
+        <div class="kpi-value">{{ metrics.active_count }} <span style="font-size: 1.1rem; color: var(--text-muted); font-weight: 500;">/ {{ metrics.total_tenants }}</span></div>
+        <div class="kpi-subtext">Активных салонов с работающими ботами</div>
+    </div>
+
+    <div class="kpi-card locked">
+        <div class="kpi-header">
+            <span class="kpi-title">Блокировки / Kill Switch</span>
+            <div class="kpi-icon-wrap">
+                <i data-lucide="shield-alert" style="width: 18px; height: 18px;"></i>
+            </div>
+        </div>
+        <div class="kpi-value">{{ metrics.locked_count }}</div>
+        <div class="kpi-subtext">Отключено за неуплату или вручную</div>
+    </div>
+</div>
+
+<!-- Section Header & Add Tenant Button -->
+<div class="section-header">
+    <div class="section-title">
+        <i data-lucide="server" style="width: 22px; height: 22px; color: #38bdf8;"></i>
+        <span>Заведения и Барбершопы в Сети</span>
+    </div>
+    <button class="btn btn-primary" onclick="openAddTenantModal()">
+        <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
+        Подключить заведение
+    </button>
+</div>
+
+<!-- Tenant Cards Grid -->
+<div class="tenant-grid">
+    {% for tenant in tenants %}
+    <div class="tenant-card {% if not tenant.is_active or tenant.subscription_status == 'LOCKED' %}is-locked{% endif %}" id="card-{{ tenant.id }}">
+        
+        <div class="tenant-card-header">
+            <div class="tenant-card-info">
+                <h3>
+                    <a href="{% if request.get_host|slice:':4' == 'hub.' %}/tenant/{{ tenant.slug }}/{% else %}{% url 'saas_hub:tenant_detail' tenant.slug %}{% endif %}">
+                        {{ tenant.name }}
+                    </a>
+                </h3>
+                <span class="tenant-slug">{{ tenant.slug }}</span>
+                {% if tenant.bot_username %}
+                    <span style="font-size: 0.8rem; color: #38bdf8; margin-left: 6px;">{{ tenant.bot_username }}</span>
+                {% endif %}
+            </div>
+
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+                <span class="badge {{ tenant.status_badge_class }}">
+                    {{ tenant.status_display }}
+                </span>
+
+                {% with telem=telemetry|dictsortreversed:tenant.id %}
+                {% endwith %}
+                
+                <span class="ping-pill online" id="ping-{{ tenant.id }}">
+                    <span class="ping-dot"></span>
+                    <span>Live REST API</span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Telemetry Stats Table -->
+        <div class="tenant-details-table">
+            <div class="tenant-detail-row">
+                <span class="tenant-detail-label">Тариф (абонплата):</span>
+                <span class="tenant-detail-val">{{ tenant.formatted_monthly_fee }}/мес</span>
+            </div>
+            <div class="tenant-detail-row">
+                <span class="tenant-detail-label">Оплачено до:</span>
+                <span class="tenant-detail-val" style="color: {% if tenant.days_left <= 3 %}var(--color-amber){% else %}var(--color-green){% endif %};">
+                    {{ tenant.subscription_expires_at|date:"d.m.Y" }} (осталось: {{ tenant.days_left }} дн.)
+                </span>
+            </div>
+            <div class="tenant-detail-row">
+                <span class="tenant-detail-label">Владелец / Контакт:</span>
+                <span class="tenant-detail-val">{{ tenant.owner_name|default:"Шеф" }} ({{ tenant.phone|default:"—" }})</span>
+            </div>
+            <div class="tenant-detail-row">
+                <span class="tenant-detail-label">Точка подключения:</span>
+                <span class="tenant-detail-val" style="font-family: monospace; font-size: 0.8rem; color: var(--text-muted);">
+                    {{ tenant.api_base_url }}
+                </span>
+            </div>
+        </div>
+
+        <!-- Direct Access Links to Salon Menus (Full Super-Admin Bypass) -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 12px 0 6px 0;">
+            <a href="{{ tenant.api_base_url }}/book?token={{ tenant.api_secret_token }}" target="_blank" class="btn btn-secondary" style="padding: 7px 6px; font-size: 0.75rem; text-decoration: none; justify-content: center;" title="Открыть клиентское меню и записаться как обычный тип">
+                <i data-lucide="user-check" style="width: 14px; height: 14px; color: #38bdf8;"></i>
+                Клиент
+            </a>
+            <a href="{{ tenant.api_base_url }}/admin?token={{ tenant.api_secret_token }}" target="_blank" class="btn btn-secondary" style="padding: 7px 6px; font-size: 0.75rem; text-decoration: none; justify-content: center;" title="Открыть родную админку Brohouse Pro с полным доступом Создателя">
+                <i data-lucide="crown" style="width: 14px; height: 14px; color: #f59e0b;"></i>
+                Админка
+            </a>
+            <a href="{{ tenant.api_base_url }}/barber?token={{ tenant.api_secret_token }}" target="_blank" class="btn btn-secondary" style="padding: 7px 6px; font-size: 0.75rem; text-decoration: none; justify-content: center;" title="Открыть рабочее место мастера">
+                <i data-lucide="scissors" style="width: 14px; height: 14px; color: var(--color-green);"></i>
+                Мастер
+            </a>
+        </div>
+
+        <!-- Quick Executive Actions -->
+        <div class="tenant-card-actions">
+            <button class="btn btn-extend" onclick="openExtendModal({{ tenant.id }}, '{{ tenant.name|escapejs }}', {{ tenant.monthly_fee }})">
+                <i data-lucide="plus-circle" style="width: 15px; height: 15px;"></i>
+                +30 дней
+            </button>
+
+            {% if tenant.is_active and tenant.subscription_status != 'LOCKED' %}
+            <button class="btn btn-killswitch" id="ks-btn-{{ tenant.id }}" onclick="toggleKillswitch({{ tenant.id }}, true, '{{ tenant.name|escapejs }}')">
+                <i data-lucide="power" style="width: 15px; height: 15px;"></i>
+                Kill Switch
+            </button>
+            {% else %}
+            <button class="btn btn-killswitch active-mode" id="ks-btn-{{ tenant.id }}" onclick="toggleKillswitch({{ tenant.id }}, false, '{{ tenant.name|escapejs }}')">
+                <i data-lucide="check-circle" style="width: 15px; height: 15px;"></i>
+                Разблокировать
+            </button>
+            {% endif %}
+
+            <a href="{% if request.get_host|slice:':4' == 'hub.' %}/tenant/{{ tenant.slug }}/{% else %}{% url 'saas_hub:tenant_detail' tenant.slug %}{% endif %}" class="btn btn-primary" style="padding: 10px 14px;" title="Полный пульт управления: записи, барберы, смены, прайс, настройки">
+                <i data-lucide="sliders" style="width: 15px; height: 15px;"></i>
+                <span>Управление</span>
+            </a>
+        </div>
+
+    </div>
+    {% empty %}
+    <div style="grid-column: 1 / -1; padding: 40px; text-align: center; background: var(--bg-card); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+        <p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 16px;">В сети пока нет зарегистрированных заведений.</p>
+        <button class="btn btn-primary" onclick="openAddTenantModal()">Подключить первое заведение</button>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Recent Transactions & Invoices -->
+<div class="section-header" style="margin-top: 20px;">
+    <div class="section-title">
+        <i data-lucide="receipt" style="width: 22px; height: 22px; color: var(--color-green);"></i>
+        <span>История оплат и инвойсы</span>
+    </div>
+</div>
+
+<div class="table-wrap">
+    <table class="hub-table">
+        <thead>
+            <tr>
+                <th>Дата</th>
+                <th>Заведение</th>
+                <th>Сумма</th>
+                <th>Период</th>
+                <th>Метод</th>
+                <th>Инвойс / Чек</th>
+                <th>Действие</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for payment in metrics.recent_payments %}
+            <tr>
+                <td style="color: var(--text-muted);">{{ payment.paid_at|date:"d.m.Y H:i" }}</td>
+                <td style="font-weight: 600;">{{ payment.tenant.name }}</td>
+                <td style="color: var(--color-green); font-weight: 700;">+{{ payment.formatted_amount }}</td>
+                <td>+{{ payment.days_added }} дн.</td>
+                <td><span style="text-transform: uppercase; font-size: 0.78rem; font-weight: 600;">{{ payment.payment_method }}</span></td>
+                <td style="font-family: monospace; font-size: 0.8rem; color: var(--text-muted);">{{ payment.receipt_number|default:"—" }}</td>
+                <td>
+                    <a href="{% if request.get_host|slice:':4' == 'hub.' %}/tenant/{{ payment.tenant.slug }}/invoice/{{ payment.id }}/{% else %}{% url 'saas_hub:invoice_detail' payment.tenant.slug payment.id %}{% endif %}" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem;" target="_blank">
+                        <i data-lucide="file-text" style="width: 12px; height: 12px;"></i>
+                        Инвойс
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" style="text-align: center; padding: 28px; color: var(--text-muted);">
+                    Платежей пока не зафиксировано.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal: Extend & Log Payment -->
+<div id="extendModal" class="modal-overlay">
+    <div class="modal-window">
+        <div class="modal-header">
+            <h3 class="modal-title">Продление подписки и фиксация оплаты</h3>
+            <button class="btn-modal-close" onclick="closeExtendModal()">&times;</button>
+        </div>
+        <form onsubmit="submitExtendForm(event)">
+            <input type="hidden" id="extendTenantId">
+            
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 18px;">
+                Заведение: <strong id="extendTenantName" style="color: var(--text-primary);"></strong>
+            </p>
+
+            <div class="form-group">
+                <label class="form-label">Срок продления:</label>
+                <select id="extendDays" class="form-control">
+                    <option value="30" selected>+30 дней (1 месяц)</option>
+                    <option value="60">+60 дней (2 месяца)</option>
+                    <option value="90">+90 дней (3 месяца)</option>
+                    <option value="365">+365 дней (1 год)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Сумма оплаты (сум):</label>
+                <input type="number" id="extendAmount" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Способ оплаты:</label>
+                <select id="extendMethod" class="form-control">
+                    <option value="click" selected>Click</option>
+                    <option value="payme">Payme</option>
+                    <option value="uzum">Uzum Bank</option>
+                    <option value="cash">Наличные</option>
+                    <option value="bank_transfer">Банковский перевод (Р/С)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Комментарий / Заметка:</label>
+                <input type="text" id="extendComment" class="form-control" placeholder="Например: Оплачено за октябрь 2026">
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
+                <button type="button" class="btn btn-secondary" onclick="closeExtendModal()">Отмена</button>
+                <button type="submit" id="btnSubmitExtend" class="btn btn-primary">Зафиксировать оплату</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal: Add New Tenant -->
+<div id="addTenantModal" class="modal-overlay">
+    <div class="modal-window">
+        <div class="modal-header">
+            <h3 class="modal-title">Подключение нового заведения</h3>
+            <button class="btn-modal-close" onclick="closeAddTenantModal()">&times;</button>
+        </div>
+        <form onsubmit="submitAddTenantForm(event)">
+            
+            <div class="form-group">
+                <label class="form-label">Название заведения:</label>
+                <input type="text" id="newTenantName" class="form-control" placeholder="Например: Brohouse Barbershop" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Уникальный Slug:</label>
+                <input type="text" id="newTenantSlug" class="form-control" placeholder="brohouse" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Юзернейм бота Telegram:</label>
+                <input type="text" id="newTenantBot" class="form-control" placeholder="@brohouse_bot">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                <div class="form-group">
+                    <label class="form-label">Владелец / Контакт:</label>
+                    <input type="text" id="newTenantOwner" class="form-control" placeholder="Аброр">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Телефон:</label>
+                    <input type="text" id="newTenantPhone" class="form-control" placeholder="+998 90 123-45-67">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Абонплата в месяц (сум):</label>
+                <input type="number" id="newTenantFee" class="form-control" value="500000" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">API URL бота (сервера):</label>
+                <input type="url" id="newTenantUrl" class="form-control" value="http://127.0.0.1:8080" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Мастер-токен (пароль супер-админа):</label>
+                <input type="text" id="newTenantToken" class="form-control" value="admin123" required>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
+                <button type="button" class="btn btn-secondary" onclick="closeAddTenantModal()">Отмена</button>
+                <button type="submit" id="btnAddTenantSubmit" class="btn btn-primary">Зарегистрировать</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

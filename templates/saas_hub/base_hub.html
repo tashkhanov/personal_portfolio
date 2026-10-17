@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SaaS Command Center | Asatkhanov Technologies{% endblock %}</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Dedicated SaaS Hub Styles -->
+    <link rel="stylesheet" href="{% static 'saas_hub/css/hub.css' %}">
+    
+    <script>
+        // Динамическое определение базовых URL для работы как на hub.asatkhanov.uz, так и на /saas-hub/
+        const isSubdomain = window.location.hostname.startsWith('hub.');
+        window.HUB_CONFIG = {
+            isSubdomain: isSubdomain,
+            killswitchUrl: isSubdomain ? '/api/killswitch/' : '/saas-hub/api/killswitch/',
+            extendUrl: isSubdomain ? '/api/extend/' : '/saas-hub/api/extend/',
+            addTenantUrl: isSubdomain ? '/api/tenants/add/' : '/saas-hub/api/tenants/add/',
+            dashboardUrl: isSubdomain ? '/' : '/saas-hub/',
+        };
+    </script>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="hub-nav">
+        <a href="{% if request.get_host|slice:':4' == 'hub.' %}/{% else %}{% url 'saas_hub:dashboard' %}{% endif %}" class="hub-brand">
+            <div class="hub-brand-logo">
+                <i data-lucide="layers" style="width: 20px; height: 20px; color: #38bdf8;"></i>
+            </div>
+            <div class="hub-brand-text">
+                <span class="hub-brand-title">KHAN &bull; SaaS Hub</span>
+                <span class="hub-brand-subtitle">Executive Command Center</span>
+            </div>
+        </a>
+
+        {% if user.is_authenticated %}
+        <div class="hub-nav-actions">
+            <div class="hub-user-pill">
+                <span class="hub-user-dot"></span>
+                <span>{{ user.username }} (Шеф / Creator)</span>
+            </div>
+            <a href="{% if request.get_host|slice:':4' == 'hub.' %}/logout/{% else %}{% url 'saas_hub:logout' %}{% endif %}" class="btn-hub-logout">
+                <i data-lucide="log-out" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i>
+                Выйти
+            </a>
+        </div>
+        {% endif %}
+    </header>
+
+    <!-- Main Container -->
+    <main class="hub-container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Global Toast Notifications -->
+    <div id="hubToast" class="toast-box">
+        <i data-lucide="check-circle" style="width: 20px; height: 20px; color: #10b981;"></i>
+        <span id="hubToastMsg">Действие успешно выполнено</span>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{% static 'saas_hub/js/hub.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -5,11 +5,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-khan-portfolio-2026-secret-key'
 
 import os
-DEBUG = (os.name == 'nt')
+DEBUG = True
 
 
 ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['https://asatkhanov.uz', 'https://www.asatkhanov.uz', 'https://khan710.pythonanywhere.com']
+CSRF_TRUSTED_ORIGINS = [
+    'https://asatkhanov.uz',
+    'https://www.asatkhanov.uz',
+    'https://hub.asatkhanov.uz',
+    'http://hub.localhost:8000',
+    'https://khan710.pythonanywhere.com'
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -19,10 +25,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'portfolio',
+    'saas_hub',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'saas_hub.middleware.SubdomainRouterMiddleware',
     'portfolio.middleware.MarkdownNegotiationMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

@@ -6,6 +6,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('khan-secure-admin-710/', admin.site.urls),
+    path('saas-hub/', include('saas_hub.urls', namespace='saas_hub')),
     path('', include('portfolio.urls')),
 ]
 

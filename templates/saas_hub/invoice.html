@@ -1,0 +1,265 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Инвойс {{ payment.receipt_number }} | {{ tenant.name }}</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Manrope', sans-serif;
+            background: #0f0f11;
+            color: #1e293b;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .invoice-box {
+            background: #ffffff;
+            width: 100%;
+            max-width: 800px;
+            padding: 48px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 24px;
+            margin-bottom: 30px;
+        }
+
+        .brand-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-sub {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        .invoice-number {
+            text-align: right;
+        }
+
+        .invoice-badge {
+            display: inline-block;
+            background: #dcfce7;
+            color: #15803d;
+            font-weight: 700;
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+        }
+
+        .invoice-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .info-block h4 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        .info-block p {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #334155;
+        }
+
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        .invoice-table th {
+            text-align: left;
+            padding: 12px 14px;
+            background: #f8fafc;
+            border-bottom: 2px solid #e2e8f0;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #475569;
+        }
+
+        .invoice-table td {
+            padding: 16px 14px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.95rem;
+        }
+
+        .total-box {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 36px;
+        }
+
+        .total-row {
+            display: flex;
+            gap: 40px;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #0f172a;
+            border-top: 2px solid #0f172a;
+            padding-top: 14px;
+        }
+
+        .payment-notes {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            font-size: 0.88rem;
+            color: #475569;
+            line-height: 1.6;
+        }
+
+        .print-btn-bar {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-print {
+            background: #0f172a;
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-print:hover {
+            background: #334155;
+        }
+
+        @media print {
+            body {
+                background: #ffffff;
+                padding: 0;
+            }
+            .invoice-box {
+                box-shadow: none;
+                padding: 0;
+            }
+            .print-btn-bar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="invoice-box">
+        
+        <div class="invoice-header">
+            <div>
+                <h1 class="brand-title">{{ creator_brand }}</h1>
+                <p class="brand-sub">Автоматизация бизнеса, AI-ассистенты и B2B SaaS системы</p>
+                <p class="brand-sub">Веб-сайт: {{ contact_website }} | Telegram: {{ contact_telegram }}</p>
+            </div>
+
+            <div class="invoice-number">
+                <span class="invoice-badge">ОПЛАЧЕНО / ПОДТВЕРЖДЕНО</span>
+                <h2 style="font-size: 1.2rem; color: #0f172a; margin-top: 4px;">{{ payment.receipt_number }}</h2>
+                <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">Дата: {{ payment.paid_at|date:"d.m.Y" }}</p>
+            </div>
+        </div>
+
+        <div class="invoice-info-grid">
+            <div class="info-block">
+                <h4>Поставщик решений (Разработчик):</h4>
+                <p><strong>{{ creator_name }}</strong></p>
+                <p>IT-инфраструктура & ИИ-решения</p>
+                <p>Ташкент, Узбекистан</p>
+                <p>Контакт: {{ contact_telegram }}</p>
+            </div>
+
+            <div class="info-block">
+                <h4>Клиент / Получатель сервиса:</h4>
+                <p><strong>{{ tenant.name }}</strong></p>
+                <p>Представитель: {{ tenant.owner_name|default:"Управляющий" }}</p>
+                <p>Телефон: {{ tenant.phone|default:"—" }}</p>
+                <p>Telegram-бот: {{ tenant.bot_username }}</p>
+            </div>
+        </div>
+
+        <table class="invoice-table">
+            <thead>
+                <tr>
+                    <th style="width: 50%;">Описание услуги</th>
+                    <th>Период</th>
+                    <th>Способ</th>
+                    <th style="text-align: right;">Сумма (UZS)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <strong>Абонентское обслуживание B2B SaaS платформы</strong><br>
+                        <span style="font-size: 0.82rem; color: #64748b;">
+                            AI-Администратор Telegram (Gemini 2.5), WebApp клиентская запись, мастер-кабинеты, сервер 24/7.
+                        </span>
+                    </td>
+                    <td>+{{ payment.days_added }} дней</td>
+                    <td style="text-transform: uppercase; font-weight: 600; font-size: 0.85rem;">{{ payment.payment_method }}</td>
+                    <td style="text-align: right; font-weight: 700; color: #0f172a;">{{ payment.formatted_amount }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="total-box">
+            <div class="total-row">
+                <span>ИТОГО К ОПЛАТЕ:</span>
+                <span>{{ payment.formatted_amount }}</span>
+            </div>
+        </div>
+
+        <div class="payment-notes">
+            <strong>Примечание:</strong> Подписка на программное обеспечение продлена до <strong>{{ tenant.subscription_expires_at|date:"d.m.Y" }}</strong>. Система работает в штатном режиме 24/7. По всем техническим вопросам и обновлениям обращайтесь напрямую к создателю: {{ contact_telegram }}.
+        </div>
+
+        <div class="print-btn-bar">
+            <span style="font-size: 0.85rem; color: #94a3b8;">Сгенерировано автоматически SaaS Command Center</span>
+            <button class="btn-print" onclick="window.print()">
+                Распечатать / Сохранить в PDF
+            </button>
+        </div>
+
+    </div>
+
+</body>
+</html>
