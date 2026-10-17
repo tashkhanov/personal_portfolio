@@ -9,6 +9,7 @@ from django.views.decorators.http import require_POST
 from django.utils import timezone
 from .models import Tenant, SubscriptionPayment, TenantSyncLog
 from .services import TenantApiClient, BillingService
+from .middleware import get_effective_host
 
 
 def superuser_required(view_func):
@@ -18,7 +19,7 @@ def superuser_required(view_func):
     """
     def wrapper(request, *args, **kwargs):
         if not request.user.is_authenticated or not request.user.is_superuser:
-            host = request.get_host().split(':')[0].lower()
+            host = get_effective_host(request) or request.get_host().split(':')[0].lower()
             login_url = '/login/' if host.startswith('hub.') or host == 'hub.asatkhanov.uz' else '/saas-hub/login/'
             return redirect(f"{login_url}?next={request.path}")
         return view_func(request, *args, **kwargs)
@@ -30,7 +31,7 @@ def hub_login(request):
     Страница входа в командный центр SaaS Hub в luxury dark стиле.
     """
     if request.user.is_authenticated and request.user.is_superuser:
-        host = request.get_host().split(':')[0].lower()
+        host = get_effective_host(request) or request.get_host().split(':')[0].lower()
         redirect_url = '/' if host.startswith('hub.') or host == 'hub.asatkhanov.uz' else '/saas-hub/'
         return redirect(redirect_url)
 
@@ -45,7 +46,7 @@ def hub_login(request):
                 login(request, user)
                 next_url = request.POST.get('next') or request.GET.get('next')
                 if not next_url:
-                    host = request.get_host().split(':')[0].lower()
+                    host = get_effective_host(request) or request.get_host().split(':')[0].lower()
                     next_url = '/' if host.startswith('hub.') or host == 'hub.asatkhanov.uz' else '/saas-hub/'
                 return redirect(next_url)
             else:
@@ -61,7 +62,7 @@ def hub_logout(request):
     Выход из командного центра.
     """
     logout(request)
-    host = request.get_host().split(':')[0].lower()
+    host = get_effective_host(request) or request.get_host().split(':')[0].lower()
     login_url = '/login/' if host.startswith('hub.') or host == 'hub.asatkhanov.uz' else '/saas-hub/login/'
     return redirect(login_url)
 
