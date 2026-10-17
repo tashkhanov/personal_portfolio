@@ -1,4 +1,5 @@
 import json
+import secrets
 from decimal import Decimal
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse
@@ -247,7 +248,7 @@ def api_add_tenant(request):
         phone = data.get('phone', '').strip()
         monthly_fee = Decimal(str(data.get('monthly_fee', 500000)))
         api_base_url = data.get('api_base_url', 'http://127.0.0.1:8080').strip()
-        api_secret_token = data.get('api_secret_token', 'admin123').strip()
+        api_secret_token = data.get('api_secret_token', '').strip() or secrets.token_urlsafe(16)
 
         if not name or not slug:
             return JsonResponse({'status': 'error', 'message': 'Название и Slug обязательны!'}, status=400)
