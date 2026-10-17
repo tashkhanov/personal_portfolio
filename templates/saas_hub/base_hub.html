@@ -15,19 +15,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <!-- Dedicated SaaS Hub Styles with cache-buster matching asatkhanov.uz -->
-    <link rel="stylesheet" href="{% static 'saas_hub/css/hub.css' %}?v=20261017_v3">
-    
-    <script>
-        // Динамическое определение базовых URL для работы как на hub.asatkhanov.uz, так и на /saas-hub/
-        const isSubdomain = window.location.hostname.startsWith('hub.');
-        window.HUB_CONFIG = {
-            isSubdomain: isSubdomain,
-            killswitchUrl: isSubdomain ? '/api/killswitch/' : '/saas-hub/api/killswitch/',
-            extendUrl: isSubdomain ? '/api/extend/' : '/saas-hub/api/extend/',
-            addTenantUrl: isSubdomain ? '/api/tenants/add/' : '/saas-hub/api/tenants/add/',
-            dashboardUrl: isSubdomain ? '/' : '/saas-hub/',
-        };
-    </script>
+    <link rel="stylesheet" href="{% static 'saas_hub/css/hub.css' %}?v=20261017_v4">
 </head>
 <body>
 
@@ -80,14 +68,8 @@
         <span id="hubToastMsg">Действие успешно выполнено</span>
     </div>
 
-    <!-- Scripts -->
-    <script src="{% static 'saas_hub/js/hub.js' %}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            if (window.lucide) {
-                window.lucide.createIcons();
-            }
-        });
-    </script>
+    <!-- Dedicated Core Logic Script -->
+    <script src="{% static 'saas_hub/js/hub.js' %}?v=20261017_v4"></script>
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

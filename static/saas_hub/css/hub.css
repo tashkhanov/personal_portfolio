@@ -68,17 +68,6 @@ body {
     position: relative;
 }
 
-/* Subtle noise overlay matching portfolio */
-body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 999999;
-    opacity: 0.025;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-}
-
 /* Scrollbars */
 ::-webkit-scrollbar {
     width: 6px;
@@ -1089,6 +1078,270 @@ textarea.form-control {
     opacity: 1;
 }
 
+/* ==========================================================================
+   TENANT DETAIL PAGE COMPONENTS (CLEAN SEMANTIC REPLACEMENT FOR INLINE STYLES)
+   ========================================================================== */
+
+.detail-header-bar {
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.detail-header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.hero-content-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.hero-main-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.hero-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+}
+
+.hero-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--t1);
+}
+
+.hero-tariff-card {
+    text-align: right;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 18px;
+}
+
+.hero-tariff-label {
+    font-size: 0.7rem;
+    color: var(--t3);
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+.hero-tariff-fee {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--t1);
+    letter-spacing: -0.02em;
+}
+
+.hero-tariff-expiry {
+    font-size: 0.78rem;
+    color: var(--t2);
+    margin-top: 2px;
+}
+
+.giant-access-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.giant-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 14px;
+}
+
+.giant-card-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--t1);
+    margin-bottom: 6px;
+}
+
+.giant-card-desc {
+    font-size: 0.84rem;
+    color: var(--t2);
+    line-height: 1.5;
+    margin-bottom: 18px;
+}
+
+.giant-card-action {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--t1);
+    font-size: 0.84rem;
+    font-weight: 600;
+}
+
+.billing-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    gap: 16px;
+}
+
+.billing-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--t1);
+}
+
+.table-date {
+    color: var(--t2);
+    font-size: 0.82rem;
+}
+
+.table-amount {
+    color: var(--t1);
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.table-period {
+    font-size: 0.8rem;
+    color: var(--t2);
+}
+
+.table-badge-method {
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    font-weight: 600;
+    background: var(--bg2);
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+}
+
+.table-mono {
+    font-family: monospace;
+    font-size: 0.78rem;
+    color: var(--t3);
+}
+
+.table-comment {
+    color: var(--t2);
+    font-size: 0.82rem;
+}
+
+.table-empty {
+    text-align: center;
+    padding: 36px;
+    color: var(--t3);
+}
+
+.settings-card {
+    max-width: 720px;
+    padding: 28px;
+}
+
+.settings-row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.settings-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* ==========================================================================
+   LOGIN PAGE COMPONENTS
+   ========================================================================== */
+
+.login-wrap {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: var(--bg);
+}
+
+.login-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 440px;
+    padding: 40px 32px;
+    box-shadow: var(--shadow-hover);
+    position: relative;
+}
+
+.login-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.login-brand-logo {
+    width: 52px;
+    height: 52px;
+    background: #161616;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+    color: var(--t1);
+}
+
+.login-brand h1 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--t1);
+    letter-spacing: -0.02em;
+}
+
+.login-brand p {
+    font-size: 0.85rem;
+    color: var(--t2);
+    margin-top: 4px;
+}
+
+.alert-error {
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    color: #f87171;
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 @media (max-width: 768px) {
     .hub-nav { padding: 14px 18px; }
     .hub-container { padding: 20px 14px; }
@@ -1096,4 +1349,5 @@ textarea.form-control {
     .kpi-grid { grid-template-columns: 1fr 1fr; }
     .hub-toolbar { flex-direction: column; align-items: stretch; }
     .hub-search-box { max-width: 100%; }
+    .settings-row-2 { grid-template-columns: 1fr; }
 }

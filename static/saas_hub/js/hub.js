@@ -1,5 +1,15 @@
 // SaaS Central Hub - Executive Control Scripts
 
+// Dynamic Host and Endpoint Routing Configuration
+const isSubdomain = window.location.hostname.startsWith('hub.');
+window.HUB_CONFIG = window.HUB_CONFIG || {
+    isSubdomain: isSubdomain,
+    killswitchUrl: isSubdomain ? '/api/killswitch/' : '/saas-hub/api/killswitch/',
+    extendUrl: isSubdomain ? '/api/extend/' : '/saas-hub/api/extend/',
+    addTenantUrl: isSubdomain ? '/api/tenants/add/' : '/saas-hub/api/tenants/add/',
+    dashboardUrl: isSubdomain ? '/' : '/saas-hub/',
+};
+
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {

@@ -15,76 +15,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <!-- Styles -->
-    <link rel="stylesheet" href="{% static 'saas_hub/css/hub.css' %}?v=20261017_v3">
-    
-    <style>
-        .login-wrap {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-            background: #0a0a0a;
-        }
-
-        .login-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            width: 100%;
-            max-width: 440px;
-            padding: 40px 32px;
-            box-shadow: var(--shadow-hover);
-            position: relative;
-        }
-
-        .login-brand {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            margin-bottom: 28px;
-        }
-
-        .login-brand-logo {
-            width: 52px;
-            height: 52px;
-            background: #161616;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 14px;
-            color: var(--t1);
-        }
-
-        .login-brand h1 {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--t1);
-            letter-spacing: -0.02em;
-        }
-
-        .login-brand p {
-            font-size: 0.85rem;
-            color: var(--t2);
-            margin-top: 4px;
-        }
-
-        .alert-error {
-            background: rgba(239, 68, 68, 0.08);
-            border: 1px solid rgba(239, 68, 68, 0.25);
-            color: #f87171;
-            padding: 12px 14px;
-            border-radius: var(--radius-sm);
-            font-size: 0.85rem;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'saas_hub/css/hub.css' %}?v=20261017_v4">
 </head>
 <body>
 
@@ -122,12 +53,12 @@
 
                 <button type="submit" class="btn btn-primary" style="width: 100%; padding: 13px; font-size: 0.95rem; margin-top: 10px;">
                     <i data-lucide="log-in" style="width: 18px; height: 18px;"></i>
-                    Войти в Командный Центр
+                    <span>Войти в Командный Центр</span>
                 </button>
             </form>
 
             <div style="text-align: center; margin-top: 24px;">
-                <a href="https://asatkhanov.uz" style="color: var(--text-muted); font-size: 0.82rem; text-decoration: none;">
+                <a href="https://asatkhanov.uz" style="color: var(--t2); font-size: 0.82rem; text-decoration: none;">
                     &larr; Вернуться на asatkhanov.uz
                 </a>
             </div>
@@ -135,12 +66,7 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            if (window.lucide) {
-                window.lucide.createIcons();
-            }
-        });
-    </script>
+    <!-- Core Scripts -->
+    <script src="{% static 'saas_hub/js/hub.js' %}?v=20261017_v4"></script>
 </body>
 </html>
