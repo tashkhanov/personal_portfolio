@@ -18,10 +18,14 @@
     <meta name="twitter:card" content="summary_large_image">
 
 
-    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    <link rel="icon" href="{% static 'favicon/favicon.ico' %}" sizes="any">
+    <link rel="icon" href="{% static 'favicon/favicon-32x32.png' %}" type="image/png" sizes="32x32">
+    <link rel="icon" href="{% static 'favicon/favicon-16x16.png' %}" type="image/png" sizes="16x16">
+    <link rel="apple-touch-icon" href="{% static 'favicon/apple-touch-icon.png' %}">
+    <link rel="manifest" href="{% static 'favicon/site.webmanifest' %}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
@@ -49,7 +53,10 @@
     <div class="progress" id="progress"></div>
 
     <nav>
-        <a href="{% url 'portfolio:index' %}" class="logo">{{ site.name }}</a>
+        <a href="{% url 'portfolio:index' %}" class="logo brand-logo-link" title="Khan • Главная">
+            <img src="{% static 'images/brand/khan_main_logo_white.svg' %}" alt="Khan" class="brand-logo-img logo-dark" height="24">
+            <img src="{% static 'images/brand/khan_main_logo_black.svg' %}" alt="Khan" class="brand-logo-img logo-light" height="24">
+        </a>
         <ul class="nav-links">
             <li><a href="{% url 'portfolio:index' %}#hero">Главная</a></li>
             <li><a href="{% url 'portfolio:index' %}#about">Обо мне</a></li>
@@ -101,7 +108,10 @@
     <footer>
         <div class="ftr">
             <div class="reveal">
-                <span class="logo">{{ site.name }}</span>
+                <a href="{% url 'portfolio:index' %}" class="logo ftr-brand-logo" title="Khan • Backend & AI">
+                    <img src="{% static 'images/brand/khan_descriptor_white.svg' %}" alt="Khan • Backend & AI" class="ftr-logo-img logo-dark" height="34">
+                    <img src="{% static 'images/brand/khan_descriptor_black.svg' %}" alt="Khan • Backend & AI" class="ftr-logo-img logo-light" height="34">
+                </a>
                 <p>{{ site.title }}. {{ site.subtitle }}.</p>
                 <div class="ftr-social">
                     <a href="{{ site.github_url|default:'#' }}" target="_blank" title="GitHub"><svg

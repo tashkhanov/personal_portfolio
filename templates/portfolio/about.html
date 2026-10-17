@@ -10,15 +10,17 @@
             
             <div class="about-page-grid reveal">
                 <div class="about-portrait-col">
-                    <div class="portrait-wrapper">
+                    <div class="portrait-wrapper" style="position: relative;">
                         {% if site.portrait %}
                             <img src="{{ site.portrait.url }}" alt="{{ site.name }}" class="portrait-img">
                         {% else %}
-                            <div class="portrait-placeholder">
-                                <i data-lucide="user" style="width: 80px; height: 80px; color: var(--t3);"></i>
-                            </div>
+                            <img src="{% static 'images/brand/khan_3d_chrome.png' %}" alt="Khan" class="portrait-img" style="object-fit: contain; padding: 25px; filter: drop-shadow(0 20px 40px rgba(0, 204, 255, 0.25));">
                         {% endif %}
                         <div class="portrait-glow"></div>
+                        <div class="brand-spec-chip">
+                            <img src="{% static 'images/brand/khan_sign_white.svg' %}" width="14" height="17" alt="K" style="display:inline-block; vertical-align:middle;">
+                            <span>Backend &amp; AI</span>
+                        </div>
                     </div>
                 </div>
                 
