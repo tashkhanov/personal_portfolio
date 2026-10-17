@@ -18,10 +18,6 @@
         </div>
         <div class="kpi-value-row">
             <div class="kpi-value">{{ metrics.formatted_mrr }}</div>
-            <span class="kpi-trend-badge">
-                <i data-lucide="arrow-up-right" style="width: 12px; height: 12px;"></i>
-                +100%
-            </span>
         </div>
         <div class="kpi-subtext">Ежемесячный потенциальный доход сети</div>
     </div>
@@ -36,9 +32,6 @@
         </div>
         <div class="kpi-value-row">
             <div class="kpi-value">{{ metrics.formatted_collected_month }}</div>
-            <span class="kpi-trend-badge">
-                Факт
-            </span>
         </div>
         <div class="kpi-subtext">Фактически поступившие оплаты за месяц</div>
     </div>
@@ -53,26 +46,20 @@
         </div>
         <div class="kpi-value-row">
             <div class="kpi-value">{{ metrics.active_count }} <span style="font-size: 1.1rem; color: var(--t3); font-weight: 500;">/ {{ metrics.total_tenants }}</span></div>
-            <span class="kpi-trend-badge">
-                100% Online
-            </span>
         </div>
         <div class="kpi-subtext">Активных салонов с работающими ботами</div>
     </div>
 
-    <!-- Kill Switch / Блокировки -->
+    <!-- Блокировки -->
     <div class="kpi-card">
         <div class="kpi-header">
-            <span class="kpi-title">Рубильник (Kill Switch)</span>
+            <span class="kpi-title">Заблокировано</span>
             <div class="kpi-icon-wrap">
                 <i data-lucide="shield-alert" style="width: 16px; height: 16px;"></i>
             </div>
         </div>
         <div class="kpi-value-row">
             <div class="kpi-value">{{ metrics.locked_count }}</div>
-            <span class="kpi-trend-badge">
-                {% if metrics.locked_count == 0 %}Норма{% else %}Требуют внимания{% endif %}
-            </span>
         </div>
         <div class="kpi-subtext">Отключено за неуплату или вручную</div>
     </div>
@@ -140,16 +127,9 @@
                 </div>
             </div>
 
-            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
-                <span class="badge {{ tenant.status_badge_class }}">
-                    {{ tenant.status_display }}
-                </span>
-                
-                <span class="ping-pill online" id="ping-{{ tenant.id }}">
-                    <span class="ping-dot"></span>
-                    <span>Live REST API</span>
-                </span>
-            </div>
+            <span class="badge {{ tenant.status_badge_class }}">
+                {{ tenant.status_display }}
+            </span>
         </div>
 
         <!-- Subscription Health Progress Bar -->
@@ -195,59 +175,56 @@
             </div>
         </div>
 
-        <!-- ======================================================== -->
-        <!-- СКВОЗНОЙ ВХОД В МЕНЮ ЗАВЕДЕНИЯ (СО ВСЕМИ ПРАВАМИ СОЗДАТЕЛЯ) -->
-        <!-- ======================================================== -->
+        <!-- Сервисы заведения -->
         <div class="direct-access-label">
-            <i data-lucide="zap" style="width: 12px; height: 12px; color: var(--t2);"></i>
-            <span>Сквозной вход в меню (Creator Access)</span>
+            <span>Вход в систему:</span>
         </div>
 
         <div class="direct-access-grid">
             <!-- 1. Клиент -->
-            <a href="{{ tenant.api_base_url }}/book?token={{ tenant.api_secret_token }}" target="_blank" class="btn-access" title="Открыть онлайн-запись в новом окне и записаться как обычный клиент">
+            <a href="{{ tenant.api_base_url }}/book?token={{ tenant.api_secret_token }}" target="_blank" class="btn-access" title="Онлайн-запись клиентов">
                 <i data-lucide="user-check" style="width: 13px; height: 13px;"></i>
                 <span>Клиент</span>
             </a>
 
-            <!-- 2. Админка Brohouse Pro -->
-            <a href="{{ tenant.api_base_url }}/admin?token={{ tenant.api_secret_token }}" target="_blank" class="btn-access" title="Открыть родную панель управления Brohouse Pro со всеми правами Создателя">
-                <i data-lucide="crown" style="width: 13px; height: 13px;"></i>
-                <span>Админка Pro</span>
+            <!-- 2. Админка -->
+            <a href="{{ tenant.api_base_url }}/admin?token={{ tenant.api_secret_token }}" target="_blank" class="btn-access" title="Админка заведения">
+                <i data-lucide="shield" style="width: 13px; height: 13px;"></i>
+                <span>Админка</span>
             </a>
 
             <!-- 3. Мастер -->
-            <a href="{{ tenant.api_base_url }}/barber?token={{ tenant.api_secret_token }}" target="_blank" class="btn-access" title="Открыть рабочее место мастера для просмотра смены и клиентов">
+            <a href="{{ tenant.api_base_url }}/barber?token={{ tenant.api_secret_token }}" target="_blank" class="btn-access" title="Кабинет мастера">
                 <i data-lucide="scissors" style="width: 13px; height: 13px;"></i>
                 <span>Мастер</span>
             </a>
         </div>
 
-        <!-- Quick Executive Actions -->
+        <!-- Действия -->
         <div class="tenant-card-actions">
             <!-- Продлить подписку -->
-            <button class="btn btn-primary" style="flex: none !important; width: auto !important;" onclick="openExtendModal({{ tenant.id }}, '{{ tenant.name|escapejs }}', {{ tenant.monthly_fee }})" title="Зафиксировать транзакцию и продлить на 30 дней">
+            <button class="btn btn-primary" style="flex: none !important; width: auto !important;" onclick="openExtendModal({{ tenant.id }}, '{{ tenant.name|escapejs }}', {{ tenant.monthly_fee }})" title="Зафиксировать оплату и продлить на 30 дней">
                 <i data-lucide="plus-circle" style="width: 14px; height: 14px;"></i>
                 <span>+30 дней</span>
             </button>
 
-            <!-- Kill Switch -->
+            <!-- Блокировка -->
             {% if tenant.is_active and tenant.subscription_status != 'LOCKED' %}
-            <button class="btn btn-killswitch" id="ks-btn-{{ tenant.id }}" onclick="toggleKillswitch({{ tenant.id }}, true, '{{ tenant.name|escapejs }}')" title="Заблокировать заведение">
+            <button class="btn btn-killswitch" id="ks-btn-{{ tenant.id }}" onclick="toggleKillswitch({{ tenant.id }}, true, '{{ tenant.name|escapejs }}')" title="Заблокировать доступ заведению">
                 <i data-lucide="power" style="width: 14px; height: 14px;"></i>
-                <span>Kill Switch</span>
+                <span>Заблокировать</span>
             </button>
             {% else %}
-            <button class="btn btn-killswitch active-mode" id="ks-btn-{{ tenant.id }}" onclick="toggleKillswitch({{ tenant.id }}, false, '{{ tenant.name|escapejs }}')" title="Разблокировать заведение">
+            <button class="btn btn-killswitch active-mode" id="ks-btn-{{ tenant.id }}" onclick="toggleKillswitch({{ tenant.id }}, false, '{{ tenant.name|escapejs }}')" title="Разблокировать доступ заведению">
                 <i data-lucide="check-circle" style="width: 14px; height: 14px;"></i>
                 <span>Разблокировать</span>
             </button>
             {% endif %}
 
-            <!-- Пульт управления -->
-            <a href="{% if request.get_host|slice:':4' == 'hub.' %}/tenant/{{ tenant.slug }}/{% else %}{% url 'saas_hub:tenant_detail' tenant.slug %}{% endif %}" class="btn btn-secondary" title="Детальный пульт заведения, история оплат и реквизиты">
+            <!-- Управление -->
+            <a href="{% if request.get_host|slice:':4' == 'hub.' %}/tenant/{{ tenant.slug }}/{% else %}{% url 'saas_hub:tenant_detail' tenant.slug %}{% endif %}" class="btn btn-secondary" title="Управление заведением и история оплат">
                 <i data-lucide="sliders" style="width: 14px; height: 14px;"></i>
-                <span>Пульт</span>
+                <span>Управление</span>
             </a>
         </div>
 

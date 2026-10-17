@@ -20,11 +20,11 @@
                 <span>+30 дней подписки</span>
             </button>
 
-            <!-- Kill Switch -->
+            <!-- Блокировка -->
             {% if tenant.is_active and tenant.subscription_status != 'LOCKED' %}
             <button class="btn btn-killswitch" id="ks-btn-{{ tenant.id }}" onclick="toggleKillswitch({{ tenant.id }}, true, '{{ tenant.name|escapejs }}')">
                 <i data-lucide="power" style="width: 15px; height: 15px;"></i>
-                <span>Kill Switch (Заблокировать)</span>
+                <span>Заблокировать</span>
             </button>
             {% else %}
             <button class="btn btn-killswitch active-mode" id="ks-btn-{{ tenant.id }}" onclick="toggleKillswitch({{ tenant.id }}, false, '{{ tenant.name|escapejs }}')">
@@ -46,10 +46,6 @@
                     <div class="hero-title-row">
                         <h1 class="hero-title">{{ tenant.name }}</h1>
                         <span class="badge {{ tenant.status_badge_class }}">{{ tenant.status_display }}</span>
-                        <span class="ping-pill {% if remote_status.online %}online{% else %}offline{% endif %}">
-                            <span class="ping-dot"></span>
-                            <span>{% if remote_status.online %}Online ({{ remote_status.latency_ms }} мс){% else %}Offline{% endif %}</span>
-                        </span>
                     </div>
                     <div class="tenant-meta-pills">
                         <span>Slug: <code class="tenant-slug">{{ tenant.slug }}</code></span>
@@ -77,55 +73,52 @@
         </div>
     </div>
 
-    <!-- ======================================================== -->
-    <!-- ПРЯМЫЕ ВХОДЫ В МЕНЮ ЗАВЕДЕНИЯ (СО ВСЕМИ ПРАВАМИ СОЗДАТЕЛЯ) -->
-    <!-- ======================================================== -->
+    <!-- Вход в сервисы -->
     <div class="section-header">
         <div class="section-title">
             <i data-lucide="external-link" style="width: 18px; height: 18px; color: var(--t2);"></i>
-            <span>Сквозной вход в меню заведения (Creator Access)</span>
+            <span>Вход в сервисы заведения</span>
         </div>
     </div>
 
-    <!-- 3 Minimalist Cards Matching Portfolio Style -->
     <div class="giant-access-grid">
         
-        <!-- 1. Клиентская запись (Как обычный тип) -->
+        <!-- 1. Клиентская запись -->
         <a href="{{ tenant.api_base_url }}/book?token={{ tenant.api_secret_token }}" target="_blank" class="giant-access-card">
             <div>
                 <div class="giant-card-head">
                     <div class="giant-access-icon">
                         <i data-lucide="user-check" style="width: 20px; height: 20px;"></i>
                     </div>
-                    <span class="giant-badge">Клиентский WebApp</span>
+                    <span class="giant-badge">Клиент</span>
                 </div>
                 <h3 class="giant-card-title">Онлайн-запись клиентов</h3>
                 <p class="giant-card-desc">
-                    Войти в роли обычного клиента и протестировать реальный WebApp: выбор филиала, каталога стрижек, свободных мастеров, тайм-слотов и оформление записи.
+                    Интерфейс записи: выбор филиала, каталога услуг, мастеров и времени записи.
                 </p>
             </div>
             <div class="giant-card-action">
-                <span>Открыть клиентское меню</span>
+                <span>Открыть онлайн-запись</span>
                 <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
             </div>
         </a>
 
-        <!-- 2. Панель администратора Brohouse Pro -->
+        <!-- 2. Панель администратора -->
         <a href="{{ tenant.api_base_url }}/admin?token={{ tenant.api_secret_token }}" target="_blank" class="giant-access-card">
             <div>
                 <div class="giant-card-head">
                     <div class="giant-access-icon">
-                        <i data-lucide="crown" style="width: 20px; height: 20px;"></i>
+                        <i data-lucide="shield" style="width: 20px; height: 20px;"></i>
                     </div>
-                    <span class="giant-badge">Brohouse Pro</span>
+                    <span class="giant-badge">Админка</span>
                 </div>
-                <h3 class="giant-card-title">Панель Brohouse Pro</h3>
+                <h3 class="giant-card-title">Панель администратора</h3>
                 <p class="giant-card-desc">
-                    Родная панель управления салоном со всеми правами Создателя: журнал записей клиентов, переключение смен барберов, редактирование прайс-листа и услуг.
+                    Управление заведением: журнал записей, смены мастеров, прайс-лист и настройки.
                 </p>
             </div>
             <div class="giant-card-action">
-                <span>Войти в админку салона</span>
+                <span>Открыть админку</span>
                 <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
             </div>
         </a>
@@ -137,11 +130,11 @@
                     <div class="giant-access-icon">
                         <i data-lucide="scissors" style="width: 20px; height: 20px;"></i>
                     </div>
-                    <span class="giant-badge">Кабинет Мастера</span>
+                    <span class="giant-badge">Мастер</span>
                 </div>
                 <h3 class="giant-card-title">Кабинет мастера</h3>
                 <p class="giant-card-desc">
-                    Индивидуальное рабочее место барбера: просмотр личного расписания на день, броней клиентов и завершение выполненных стрижек.
+                    Рабочее место барбера: расписание на день, журнал записей и отметки о визитах.
                 </p>
             </div>
             <div class="giant-card-action">

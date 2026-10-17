@@ -33,19 +33,10 @@
 
         {% if user.is_authenticated %}
         <div class="hub-nav-actions">
-            <!-- System Health Beacon -->
-            <div class="hub-status-beacon" title="Все микросервисы и телеметрия заведений функционируют в штатном режиме">
-                <span class="pulse-beacon-dot"></span>
-                <span>Сеть в норме &bull; Live Cloud Sync</span>
-            </div>
-
-            <!-- User Creator Identity Badge -->
+            <!-- User Identity Badge -->
             <div class="hub-user-pill">
                 <div class="hub-user-avatar">IA</div>
-                <div style="display: flex; flex-direction: column; text-align: left; line-height: 1.2;">
-                    <span style="font-weight: 700; color: var(--t1); font-size: 0.82rem;">{{ user.username }}</span>
-                    <span style="font-size: 0.7rem; color: var(--t2);">Шеф &bull; Создатель</span>
-                </div>
+                <span style="font-weight: 600; color: var(--t1); font-size: 0.82rem;">{{ user.username }}</span>
             </div>
 
             <!-- Logout Button -->

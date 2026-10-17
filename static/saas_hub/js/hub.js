@@ -42,7 +42,7 @@ function showToast(message, type = 'success') {
 
 // Kill Switch Toggle
 async function toggleKillswitch(tenantId, currentActive, tenantName) {
-    const nextAction = currentActive ? 'заблокировать (Kill Switch)' : 'разблокировать';
+    const nextAction = currentActive ? 'заблокировать' : 'разблокировать';
     const confirmed = confirm(`Вы уверены, что хотите ${nextAction} заведение "${tenantName}"?\n\nБот и WebApp моментально ${currentActive ? 'прекратят' : 'возобновят'} обслуживание клиентов.`);
     if (!confirmed) return;
 
