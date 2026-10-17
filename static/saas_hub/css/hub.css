@@ -368,16 +368,18 @@ body {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    gap: 8px;
-    margin-bottom: 4px;
+    gap: 10px;
+    margin-bottom: 6px;
+    flex-wrap: nowrap;
 }
 
 .kpi-value {
-    font-size: 1.8rem;
+    font-size: 1.55rem;
     font-weight: 700;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.02em;
     color: var(--t1);
-    line-height: 1.15;
+    line-height: 1.2;
+    white-space: nowrap;
 }
 
 .kpi-trend-badge {
@@ -386,11 +388,13 @@ body {
     gap: 4px;
     font-size: 0.72rem;
     font-weight: 600;
-    padding: 2px 8px;
+    padding: 3px 10px;
     border-radius: var(--radius-pill);
     background: #1a1a1a;
     border: 1px solid var(--border);
     color: var(--t2);
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
 }
 
 .kpi-subtext {
