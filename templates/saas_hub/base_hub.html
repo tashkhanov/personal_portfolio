@@ -14,8 +14,8 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     
-    <!-- Dedicated SaaS Hub Styles with cache-buster matching asatkhanov.uz -->
-    <link rel="stylesheet" href="{% static 'saas_hub/css/hub.css' %}?v=20261017_v4">
+    <!-- Dedicated SaaS Hub Styles matching asatkhanov.uz -->
+    <link rel="stylesheet" href="{% static 'saas_hub/css/hub.css' %}">
 </head>
 <body>
 
@@ -69,7 +69,7 @@
     </div>
 
     <!-- Dedicated Core Logic Script -->
-    <script src="{% static 'saas_hub/js/hub.js' %}?v=20261017_v4"></script>
+    <script src="{% static 'saas_hub/js/hub.js' %}"></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>
