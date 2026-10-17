@@ -627,7 +627,7 @@ body {
     font-size: 1rem;
     font-weight: 700;
     color: var(--t1);
-    shrink: 0;
+    flex-shrink: 0;
 }
 
 .tenant-card-info h3 {

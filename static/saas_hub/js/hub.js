@@ -77,6 +77,22 @@ async function toggleKillswitch(tenantId, currentActive, tenantName) {
     }
 }
 
+// Click Helpers for data-attributes
+function handleExtendClick(btn) {
+    if (!btn) return;
+    const tenantId = btn.dataset.tenantId;
+    const tenantName = btn.dataset.tenantName;
+    const monthlyFee = btn.dataset.monthlyFee;
+    openExtendModal(tenantId, tenantName, monthlyFee);
+}
+
+function handleKillswitchClick(btn, isLock) {
+    if (!btn) return;
+    const tenantId = btn.dataset.tenantId;
+    const tenantName = btn.dataset.tenantName;
+    toggleKillswitch(tenantId, isLock, tenantName);
+}
+
 // Extend Subscription Modal
 function openExtendModal(tenantId, tenantName, monthlyFee) {
     document.getElementById('extendTenantId').value = tenantId;

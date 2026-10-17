@@ -141,7 +141,7 @@
         <!-- Subscription Health Progress Bar -->
         <div class="sub-health-container">
             <div class="sub-health-labels">
-                <span class="sub-health-days" style="color: {% if tenant.days_left <= 0 %}var(--red){% elif tenant.days_left <= 3 %}var(--amber){% else %}var(--t1){% endif %};">
+                <span class="sub-health-days" style="color: {{ tenant.health_color }};">
                     {% if tenant.days_left > 0 %}
                         {{ tenant.days_left }} дн. осталось
                     {% elif tenant.days_left == 0 %}
@@ -154,7 +154,7 @@
             </div>
             <div class="sub-progress-bar">
                 <div class="sub-progress-fill {% if tenant.days_left <= 0 %}red{% elif tenant.days_left <= 3 %}amber{% else %}green{% endif %}" 
-                     style="width: {% if tenant.days_left <= 0 %}100{% elif tenant.days_left >= 30 %}100{% else %}{{ tenant.days_left|stringformat:'f' }}{% endif %}%;">
+                     style="width: {{ tenant.progress_percent }}%;">
                 </div>
             </div>
         </div>
@@ -209,19 +209,32 @@
         <!-- Действия -->
         <div class="tenant-card-actions">
             <!-- Продлить подписку -->
-            <button class="btn btn-primary" style="flex: none !important; width: auto !important;" onclick="openExtendModal({{ tenant.id }}, '{{ tenant.name|escapejs }}', {{ tenant.monthly_fee }})" title="Зафиксировать оплату и продлить на 30 дней">
+            <button class="btn btn-primary" style="flex: none !important; width: auto !important;" 
+                    data-tenant-id="{{ tenant.id }}" 
+                    data-tenant-name="{{ tenant.name }}" 
+                    data-monthly-fee="{{ tenant.monthly_fee }}" 
+                    onclick="handleExtendClick(this)" 
+                    title="Зафиксировать оплату и продлить на 30 дней">
                 <i data-lucide="plus-circle" style="width: 14px; height: 14px;"></i>
                 <span>+30 дней</span>
             </button>
 
             <!-- Блокировка -->
             {% if tenant.is_active and tenant.subscription_status != 'LOCKED' %}
-            <button class="btn btn-killswitch" id="ks-btn-{{ tenant.id }}" onclick="toggleKillswitch({{ tenant.id }}, true, '{{ tenant.name|escapejs }}')" title="Заблокировать доступ заведению">
+            <button class="btn btn-killswitch" id="ks-btn-{{ tenant.id }}" 
+                    data-tenant-id="{{ tenant.id }}" 
+                    data-tenant-name="{{ tenant.name }}" 
+                    onclick="handleKillswitchClick(this, true)" 
+                    title="Заблокировать доступ заведению">
                 <i data-lucide="power" style="width: 14px; height: 14px;"></i>
                 <span>Заблокировать</span>
             </button>
             {% else %}
-            <button class="btn btn-killswitch active-mode" id="ks-btn-{{ tenant.id }}" onclick="toggleKillswitch({{ tenant.id }}, false, '{{ tenant.name|escapejs }}')" title="Разблокировать доступ заведению">
+            <button class="btn btn-killswitch active-mode" id="ks-btn-{{ tenant.id }}" 
+                    data-tenant-id="{{ tenant.id }}" 
+                    data-tenant-name="{{ tenant.name }}" 
+                    onclick="handleKillswitchClick(this, false)" 
+                    title="Разблокировать доступ заведению">
                 <i data-lucide="check-circle" style="width: 14px; height: 14px;"></i>
                 <span>Разблокировать</span>
             </button>

@@ -82,8 +82,8 @@ class TenantApiClient:
         """
         Отправляет команду на удаленный бот для переключения рубильника Kill Switch.
         """
-        # Эндпоинт в B2B-SaaS: /api/super/tenants/{id}/toggle-active
-        url = f"{tenant.api_base_url.rstrip('/')}/api/super/tenants/1/toggle-active"
+        # Эндпоинт в B2B-SaaS: /api/super/tenants/{id_or_slug}/toggle-active
+        url = f"{tenant.api_base_url.rstrip('/')}/api/super/tenants/{tenant.slug}/toggle-active"
         headers = {
             "X-Super-Admin-Token": tenant.api_secret_token,
             "Content-Type": "application/json",
@@ -100,8 +100,8 @@ class TenantApiClient:
         """
         Синхронизирует продление дней подписки на удаленном сервере бота.
         """
-        # Эндпоинт в B2B-SaaS: /api/super/tenants/{id}/extend-30
-        url = f"{tenant.api_base_url.rstrip('/')}/api/super/tenants/1/extend-30"
+        # Эндпоинт в B2B-SaaS: /api/super/tenants/{id_or_slug}/extend-30
+        url = f"{tenant.api_base_url.rstrip('/')}/api/super/tenants/{tenant.slug}/extend-30"
         headers = {
             "X-Super-Admin-Token": tenant.api_secret_token,
             "Content-Type": "application/json",

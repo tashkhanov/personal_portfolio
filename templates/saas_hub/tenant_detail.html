@@ -15,19 +15,29 @@
 
         <div class="detail-header-actions">
             <!-- Продлить подписку (White capsule pill matching asatkhanov.uz) -->
-            <button class="btn btn-primary" onclick="openExtendModal({{ tenant.id }}, '{{ tenant.name|escapejs }}', {{ tenant.monthly_fee }})">
+            <button class="btn btn-primary" 
+                    data-tenant-id="{{ tenant.id }}" 
+                    data-tenant-name="{{ tenant.name }}" 
+                    data-monthly-fee="{{ tenant.monthly_fee }}" 
+                    onclick="handleExtendClick(this)">
                 <i data-lucide="plus-circle" style="width: 15px; height: 15px;"></i>
                 <span>+30 дней подписки</span>
             </button>
 
             <!-- Блокировка -->
             {% if tenant.is_active and tenant.subscription_status != 'LOCKED' %}
-            <button class="btn btn-killswitch" id="ks-btn-{{ tenant.id }}" onclick="toggleKillswitch({{ tenant.id }}, true, '{{ tenant.name|escapejs }}')">
+            <button class="btn btn-killswitch" id="ks-btn-{{ tenant.id }}" 
+                    data-tenant-id="{{ tenant.id }}" 
+                    data-tenant-name="{{ tenant.name }}" 
+                    onclick="handleKillswitchClick(this, true)">
                 <i data-lucide="power" style="width: 15px; height: 15px;"></i>
                 <span>Заблокировать</span>
             </button>
             {% else %}
-            <button class="btn btn-killswitch active-mode" id="ks-btn-{{ tenant.id }}" onclick="toggleKillswitch({{ tenant.id }}, false, '{{ tenant.name|escapejs }}')">
+            <button class="btn btn-killswitch active-mode" id="ks-btn-{{ tenant.id }}" 
+                    data-tenant-id="{{ tenant.id }}" 
+                    data-tenant-name="{{ tenant.name }}" 
+                    onclick="handleKillswitchClick(this, false)">
                 <i data-lucide="check-circle" style="width: 15px; height: 15px;"></i>
                 <span>Разблокировать</span>
             </button>
@@ -199,7 +209,11 @@
                 <span>История оплат и выставленные инвойсы</span>
             </div>
             <div>
-                <button class="btn btn-primary" onclick="openExtendModal({{ tenant.id }}, '{{ tenant.name|escapejs }}', {{ tenant.monthly_fee }})">
+                <button class="btn btn-primary" 
+                        data-tenant-id="{{ tenant.id }}" 
+                        data-tenant-name="{{ tenant.name }}" 
+                        data-monthly-fee="{{ tenant.monthly_fee }}" 
+                        onclick="handleExtendClick(this)">
                     <i data-lucide="plus-circle" style="width: 15px; height: 15px;"></i>
                     <span>Зафиксировать оплату (+30 дн)</span>
                 </button>

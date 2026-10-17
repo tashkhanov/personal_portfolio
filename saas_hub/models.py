@@ -77,6 +77,22 @@ class Tenant(models.Model):
     def formatted_monthly_fee(self) -> str:
         return f"{int(self.monthly_fee):,} сум".replace(",", " ")
 
+    @property
+    def progress_percent(self) -> int:
+        if self.days_left <= 0:
+            return 100
+        if self.days_left >= 30:
+            return 100
+        return max(5, min(100, int(self.days_left * 100 / 30)))
+
+    @property
+    def health_color(self) -> str:
+        if self.days_left <= 0:
+            return "var(--red)"
+        if self.days_left <= 3:
+            return "var(--amber)"
+        return "var(--t1)"
+
 
 class SubscriptionPayment(models.Model):
     """
