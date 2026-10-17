@@ -12,12 +12,13 @@
     <div class="kpi-card">
         <div class="kpi-header">
             <span class="kpi-title">Сеть MRR (Выручка)</span>
-            <div class="kpi-icon-wrap">
+            <div class="kpi-icon-wrap kpi-icon-green">
                 <i data-lucide="trending-up" style="width: 16px; height: 16px;"></i>
             </div>
         </div>
         <div class="kpi-value-row">
             <div class="kpi-value">{{ metrics.formatted_mrr }}</div>
+            <span class="kpi-tag green">MRR</span>
         </div>
         <div class="kpi-subtext">Ежемесячный потенциальный доход сети</div>
     </div>
@@ -26,12 +27,13 @@
     <div class="kpi-card">
         <div class="kpi-header">
             <span class="kpi-title">Собрано за месяц</span>
-            <div class="kpi-icon-wrap">
+            <div class="kpi-icon-wrap kpi-icon-cyan">
                 <i data-lucide="wallet" style="width: 16px; height: 16px;"></i>
             </div>
         </div>
         <div class="kpi-value-row">
             <div class="kpi-value">{{ metrics.formatted_collected_month }}</div>
+            <span class="kpi-tag cyan">Факт</span>
         </div>
         <div class="kpi-subtext">Фактически поступившие оплаты за месяц</div>
     </div>
@@ -40,12 +42,13 @@
     <div class="kpi-card">
         <div class="kpi-header">
             <span class="kpi-title">Клиенты сети</span>
-            <div class="kpi-icon-wrap">
+            <div class="kpi-icon-wrap kpi-icon-purple">
                 <i data-lucide="store" style="width: 16px; height: 16px;"></i>
             </div>
         </div>
         <div class="kpi-value-row">
             <div class="kpi-value">{{ metrics.active_count }} <span style="font-size: 1.1rem; color: var(--t3); font-weight: 500;">/ {{ metrics.total_tenants }}</span></div>
+            <span class="kpi-tag green">{{ metrics.active_count }} онлайн</span>
         </div>
         <div class="kpi-subtext">Активных салонов с работающими ботами</div>
     </div>
@@ -54,12 +57,15 @@
     <div class="kpi-card">
         <div class="kpi-header">
             <span class="kpi-title">Заблокировано</span>
-            <div class="kpi-icon-wrap">
+            <div class="kpi-icon-wrap {% if metrics.locked_count > 0 %}kpi-icon-red{% else %}kpi-icon-green{% endif %}">
                 <i data-lucide="shield-alert" style="width: 16px; height: 16px;"></i>
             </div>
         </div>
         <div class="kpi-value-row">
             <div class="kpi-value">{{ metrics.locked_count }}</div>
+            <span class="kpi-tag {% if metrics.locked_count > 0 %}red{% else %}green{% endif %}">
+                {% if metrics.locked_count > 0 %}{{ metrics.locked_count }} в стопе{% else %}Норма{% endif %}
+            </span>
         </div>
         <div class="kpi-subtext">Отключено за неуплату или вручную</div>
     </div>
@@ -79,9 +85,9 @@
         <!-- Filter Chips -->
         <div class="filter-chips">
             <button class="filter-chip active" onclick="setFilter('all', this)">Все ({{ tenants.count }})</button>
-            <button class="filter-chip" onclick="setFilter('active', this)">Активные ({{ metrics.active_count }})</button>
-            <button class="filter-chip" onclick="setFilter('warning', this)">Истекающие ({{ metrics.warning_count }})</button>
-            <button class="filter-chip" onclick="setFilter('locked', this)">Заблокированные ({{ metrics.locked_count }})</button>
+            <button class="filter-chip chip-active" onclick="setFilter('active', this)">Активные ({{ metrics.active_count }})</button>
+            <button class="filter-chip chip-warning" onclick="setFilter('warning', this)">Истекающие ({{ metrics.warning_count }})</button>
+            <button class="filter-chip chip-locked" onclick="setFilter('locked', this)">Заблокированные ({{ metrics.locked_count }})</button>
         </div>
     </div>
 
@@ -182,19 +188,19 @@
 
         <div class="direct-access-grid">
             <!-- 1. Клиент -->
-            <a href="{{ tenant.api_base_url }}/book?token={{ tenant.api_secret_token }}" target="_blank" class="btn-access" title="Онлайн-запись клиентов">
+            <a href="{{ tenant.api_base_url }}/book?token={{ tenant.api_secret_token }}" target="_blank" class="btn-access btn-access-client" title="Онлайн-запись клиентов">
                 <i data-lucide="user-check" style="width: 13px; height: 13px;"></i>
                 <span>Клиент</span>
             </a>
 
             <!-- 2. Админка -->
-            <a href="{{ tenant.api_base_url }}/admin?token={{ tenant.api_secret_token }}" target="_blank" class="btn-access" title="Админка заведения">
+            <a href="{{ tenant.api_base_url }}/admin?token={{ tenant.api_secret_token }}" target="_blank" class="btn-access btn-access-admin" title="Админка заведения">
                 <i data-lucide="shield" style="width: 13px; height: 13px;"></i>
                 <span>Админка</span>
             </a>
 
             <!-- 3. Мастер -->
-            <a href="{{ tenant.api_base_url }}/barber?token={{ tenant.api_secret_token }}" target="_blank" class="btn-access" title="Кабинет мастера">
+            <a href="{{ tenant.api_base_url }}/barber?token={{ tenant.api_secret_token }}" target="_blank" class="btn-access btn-access-barber" title="Кабинет мастера">
                 <i data-lucide="scissors" style="width: 13px; height: 13px;"></i>
                 <span>Мастер</span>
             </a>

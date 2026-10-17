@@ -39,35 +39,66 @@
     <div class="tenant-hero-card">
         <div class="hero-content-row">
             <div class="hero-main-info">
-                <div class="tenant-avatar">
+                <div class="hero-avatar">
                     {{ tenant.name|slice:":2"|upper }}
                 </div>
-                <div>
+                <div class="hero-details">
                     <div class="hero-title-row">
                         <h1 class="hero-title">{{ tenant.name }}</h1>
                         <span class="badge {{ tenant.status_badge_class }}">{{ tenant.status_display }}</span>
                     </div>
-                    <div class="tenant-meta-pills">
-                        <span>Slug: <code class="tenant-slug">{{ tenant.slug }}</code></span>
+
+                    <div class="hero-meta-chips">
                         {% if tenant.bot_username %}
-                            <a href="https://t.me/{{ tenant.bot_username|cut:'@' }}" target="_blank" class="tenant-bot-link">
+                            <a href="https://t.me/{{ tenant.bot_username|cut:'@' }}" target="_blank" class="meta-chip meta-chip-tg" title="Открыть Telegram бота">
                                 <i data-lucide="send" style="width: 12px; height: 12px;"></i>
                                 <span>{{ tenant.bot_username }}</span>
                             </a>
                         {% endif %}
-                        <span>&bull;</span>
-                        <span>Шеф: <strong style="color: var(--t1);">{{ tenant.owner_name|default:"Шеф" }}</strong></span>
-                        <span>&bull;</span>
-                        <span>Тел: <strong style="color: var(--t1);">{{ tenant.phone|default:"—" }}</strong></span>
+
+                        <span class="meta-chip" title="Slug заведения">
+                            <i data-lucide="hash" style="width: 12px; height: 12px; color: var(--t3);"></i>
+                            <code class="meta-slug">{{ tenant.slug }}</code>
+                        </span>
+
+                        {% if tenant.owner_name %}
+                        <span class="meta-chip" title="Управляющий / Шеф">
+                            <i data-lucide="user" style="width: 12px; height: 12px; color: var(--t3);"></i>
+                            <span>{{ tenant.owner_name }}</span>
+                        </span>
+                        {% endif %}
+
+                        {% if tenant.phone %}
+                        <a href="tel:{{ tenant.phone }}" class="meta-chip meta-chip-phone" title="Телефон заведения">
+                            <i data-lucide="phone" style="width: 12px; height: 12px;"></i>
+                            <span>{{ tenant.phone }}</span>
+                        </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
 
             <div class="hero-tariff-card">
-                <div class="hero-tariff-label">Тариф лицензии</div>
-                <div class="hero-tariff-fee">{{ tenant.formatted_monthly_fee }}/мес</div>
+                <div class="hero-tariff-header">
+                    <span class="hero-tariff-label">Тариф лицензии</span>
+                    <span class="sub-days-pill {% if tenant.days_left <= 0 %}red{% elif tenant.days_left <= 3 %}amber{% else %}green{% endif %}">
+                        {% if tenant.days_left > 0 %}
+                            {{ tenant.days_left }} дн. осталось
+                        {% elif tenant.days_left == 0 %}
+                            Истекает сегодня
+                        {% else %}
+                            Просрочено ({{ tenant.days_left|stringformat:"+d"|slice:"1:" }} дн.)
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="hero-tariff-fee">{{ tenant.formatted_monthly_fee }} <span class="fee-period">/ мес</span></div>
                 <div class="hero-tariff-expiry">
-                    Оплачено до: <strong style="color: var(--t1);">{{ tenant.subscription_expires_at|date:"d.m.Y" }}</strong> ({{ tenant.days_left }} дн.)
+                    Оплачено до: <strong>{{ tenant.subscription_expires_at|date:"d.m.Y" }}</strong>
+                </div>
+                <div class="hero-progress-bar">
+                    <div class="sub-progress-fill {% if tenant.days_left <= 0 %}red{% elif tenant.days_left <= 3 %}amber{% else %}green{% endif %}" 
+                         style="width: {% if tenant.days_left <= 0 %}100{% elif tenant.days_left >= 30 %}100{% else %}{{ tenant.days_left|stringformat:'f' }}{% endif %}%;">
+                    </div>
                 </div>
             </div>
         </div>
@@ -84,7 +115,7 @@
     <div class="giant-access-grid">
         
         <!-- 1. Клиентская запись -->
-        <a href="{{ tenant.api_base_url }}/book?token={{ tenant.api_secret_token }}" target="_blank" class="giant-access-card">
+        <a href="{{ tenant.api_base_url }}/book?token={{ tenant.api_secret_token }}" target="_blank" class="giant-access-card giant-card-client">
             <div>
                 <div class="giant-card-head">
                     <div class="giant-access-icon">
@@ -104,7 +135,7 @@
         </a>
 
         <!-- 2. Панель администратора -->
-        <a href="{{ tenant.api_base_url }}/admin?token={{ tenant.api_secret_token }}" target="_blank" class="giant-access-card">
+        <a href="{{ tenant.api_base_url }}/admin?token={{ tenant.api_secret_token }}" target="_blank" class="giant-access-card giant-card-admin">
             <div>
                 <div class="giant-card-head">
                     <div class="giant-access-icon">
@@ -124,7 +155,7 @@
         </a>
 
         <!-- 3. Кабинет мастера -->
-        <a href="{{ tenant.api_base_url }}/barber?token={{ tenant.api_secret_token }}" target="_blank" class="giant-access-card">
+        <a href="{{ tenant.api_base_url }}/barber?token={{ tenant.api_secret_token }}" target="_blank" class="giant-access-card giant-card-barber">
             <div>
                 <div class="giant-card-head">
                     <div class="giant-access-icon">
