@@ -97,6 +97,8 @@ def tenant_detail(request, slug):
     быстрые ссылки на родные меню (клиентское, админка, мастер), статус подписки, история оплат и настройки.
     """
     tenant = get_object_or_404(Tenant, slug=slug)
+    # Автоматическая синхронизация тарифа и даты подписки из SaaS Hub в бот
+    TenantApiClient.sync_tenant_subscription(tenant)
     remote_status = TenantApiClient.get_remote_status(tenant, timeout_sec=1.0)
     payments = tenant.payments.all()
     sync_logs = tenant.sync_logs.all()[:20]

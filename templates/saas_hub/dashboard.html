@@ -141,7 +141,7 @@
         <!-- Subscription Health Progress Bar -->
         <div class="sub-health-container">
             <div class="sub-health-labels">
-                <span class="sub-health-days" style="color: {{ tenant.health_color }};">
+                <span class="sub-health-days {{ tenant.health_level }}">
                     {% if tenant.days_left > 0 %}
                         {{ tenant.days_left }} дн. осталось
                     {% elif tenant.days_left == 0 %}
@@ -153,8 +153,7 @@
                 <span class="sub-health-expiry">до {{ tenant.subscription_expires_at|date:"d.m.Y" }}</span>
             </div>
             <div class="sub-progress-bar">
-                <div class="sub-progress-fill {% if tenant.days_left <= 0 %}red{% elif tenant.days_left <= 3 %}amber{% else %}green{% endif %}" 
-                     style="width: {{ tenant.progress_percent }}%;">
+                <div class="sub-progress-fill {{ tenant.health_level }}" data-progress="{{ tenant.progress_percent }}">
                 </div>
             </div>
         </div>

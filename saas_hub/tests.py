@@ -82,26 +82,35 @@ class SaasHubViewAndMiddlewareTests(TestCase):
         )
 
     def test_subdomain_middleware_routing(self):
+        from django.test import RequestFactory
         mw = SubdomainRouterMiddleware(lambda r: None)
-        
-        class FakeRequest:
-            def __init__(self, host):
-                self.host = host
-                self.urlconf = None
-            def get_host(self):
-                return self.host
+        rf = RequestFactory()
 
-        req1 = FakeRequest('hub.asatkhanov.uz')
-        mw(req1)
-        self.assertEqual(req1.urlconf, 'saas_hub.subdomain_urls')
+        def make(host, forwarded=None):
+            extra = {'HTTP_HOST': host}
+            if forwarded:
+                extra['HTTP_X_FORWARDED_HOST'] = forwarded
+            req = rf.get('/', **extra)
+            req.urlconf = None
+            return req
 
-        req2 = FakeRequest('hub.localhost:8000')
-        mw(req2)
-        self.assertEqual(req2.urlconf, 'saas_hub.subdomain_urls')
+        with self.settings(ALLOWED_HOSTS=['*']):
+            req1 = make('hub.asatkhanov.uz')
+            mw(req1)
+            self.assertEqual(req1.urlconf, 'saas_hub.subdomain_urls')
 
-        req3 = FakeRequest('asatkhanov.uz')
-        mw(req3)
-        self.assertIsNone(req3.urlconf)
+            req2 = make('hub.localhost:8000')
+            mw(req2)
+            self.assertEqual(req2.urlconf, 'saas_hub.subdomain_urls')
+
+            req3 = make('asatkhanov.uz')
+            mw(req3)
+            self.assertIsNone(req3.urlconf)
+
+            # Через Cloudflare Worker: Host = pythonanywhere, оригинальный хост в X-Forwarded-Host
+            req4 = make('khan710.pythonanywhere.com', forwarded='hub.asatkhanov.uz')
+            mw(req4)
+            self.assertEqual(req4.urlconf, 'saas_hub.subdomain_urls')
 
     def test_dashboard_access_control(self):
         # Anonymous user gets redirected

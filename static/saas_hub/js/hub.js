@@ -262,3 +262,17 @@ function filterTenants() {
         }
     });
 }
+
+// Subscription progress bars: width comes from data-progress (0–100)
+function initProgressBars() {
+    document.querySelectorAll('.sub-progress-fill[data-progress]').forEach(el => {
+        const pct = Math.max(0, Math.min(100, parseInt(el.dataset.progress, 10) || 0));
+        requestAnimationFrame(() => { el.style.width = pct + '%'; });
+    });
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initProgressBars);
+} else {
+    initProgressBars();
+}

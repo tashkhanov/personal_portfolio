@@ -93,6 +93,15 @@ class Tenant(models.Model):
             return "var(--amber)"
         return "var(--t1)"
 
+    @property
+    def health_level(self) -> str:
+        """CSS-модификатор уровня здоровья подписки: red / amber / green."""
+        if self.days_left <= 0:
+            return "red"
+        if self.days_left <= 3:
+            return "amber"
+        return "green"
+
 
 class SubscriptionPayment(models.Model):
     """
