@@ -5,7 +5,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-khan-portfolio-2026-secret-key'
 
 import os
-DEBUG = True
+DEBUG = False
 
 
 ALLOWED_HOSTS = ['*']
