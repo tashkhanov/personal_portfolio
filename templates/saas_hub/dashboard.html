@@ -133,9 +133,12 @@
                 </div>
             </div>
 
-            <span class="badge {{ tenant.status_badge_class }}">
-                {{ tenant.status_display }}
-            </span>
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+                <span class="badge {{ tenant.tier_badge_class }}">{{ tenant.tier_label_short }}</span>
+                <span class="badge {{ tenant.status_badge_class }}">
+                    {{ tenant.status_display }}
+                </span>
+            </div>
         </div>
 
         <!-- Subscription Health Progress Bar -->
@@ -162,7 +165,9 @@
         <div class="tenant-meta-grid">
             <div class="tenant-meta-item">
                 <span class="tenant-meta-item-label">Тариф:</span>
-                <span class="tenant-meta-item-val">{{ tenant.formatted_monthly_fee }}/мес</span>
+                <span class="tenant-meta-item-val">
+                    <strong style="color: var(--t1);">{{ tenant.tier_label_short }}</strong> ({{ tenant.formatted_monthly_fee }}/мес)
+                </span>
             </div>
             <div class="tenant-meta-item">
                 <span class="tenant-meta-item-label">Управляющий:</span>
@@ -273,7 +278,6 @@
                 <th>Заведение</th>
                 <th>Сумма</th>
                 <th>Период</th>
-                <th>Способ оплаты</th>
                 <th>Номер инвойса</th>
                 <th>Действие</th>
             </tr>
@@ -295,11 +299,6 @@
                     <td>
                         <span style="font-size: 0.8rem; color: var(--t2);">
                             +{{ payment.days_added }} дней
-                        </span>
-                    </td>
-                    <td>
-                        <span style="text-transform: uppercase; font-size: 0.72rem; font-weight: 600; background: var(--bg2); padding: 3px 8px; border-radius: 4px; border: 1px solid var(--border);">
-                            {{ payment.payment_method }}
                         </span>
                     </td>
                     <td style="font-family: monospace; font-size: 0.78rem; color: var(--t3);">
@@ -356,15 +355,6 @@
             </div>
 
             <div class="form-group">
-                <label class="form-label">Способ оплаты:</label>
-                <select id="extendMethod" class="form-control">
-                    {% for key, val in method_choices %}
-                        <option value="{{ key }}">{{ val }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div class="form-group">
                 <label class="form-label">Комментарий:</label>
                 <input type="text" id="extendComment" class="form-control" placeholder="Оплата подписки">
             </div>
@@ -404,7 +394,7 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Юзернейм бота:</label>
-                    <input type="text" id="newTenantBot" class="form-control" placeholder="@brohouse_bot">
+                    <input type="text" id="newTenantBot" class="form-control" placeholder="@salon_bot">
                 </div>
             </div>
 
@@ -419,9 +409,21 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <label class="form-label">Абонплата в месяц (сум):</label>
-                <input type="number" id="newTenantFee" class="form-control" value="500000" required>
+            <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 12px;">
+                <div class="form-group">
+                    <label class="form-label">Тарифный план:</label>
+                    <select id="newTenantTier" class="form-control" onchange="handleNewTenantTierChange(this)">
+                        {% for t in tier_config_list %}
+                            <option value="{{ t.code }}" data-fee="{{ t.monthly_fee }}" {% if t.code == 'PRO' %}selected{% endif %}>
+                                {{ t.name }} — {{ t.formatted_fee }} сум/мес
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Абонплата (сум):</label>
+                    <input type="number" id="newTenantFee" class="form-control" value="1190000" required>
+                </div>
             </div>
 
             <div class="form-group">

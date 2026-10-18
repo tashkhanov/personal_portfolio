@@ -55,6 +55,7 @@
                 <div class="hero-details">
                     <div class="hero-title-row">
                         <h1 class="hero-title">{{ tenant.name }}</h1>
+                        <span id="tenant-tier-badge" class="badge {{ tenant.tier_badge_class }}">{{ tenant.tier_label_short }}</span>
                         <span class="badge {{ tenant.status_badge_class }}">{{ tenant.status_display }}</span>
                     </div>
 
@@ -101,7 +102,7 @@
                         {% endif %}
                     </span>
                 </div>
-                <div class="hero-tariff-fee">{{ tenant.formatted_monthly_fee }} <span class="fee-period">/ мес</span></div>
+                <div class="hero-tariff-fee" id="hero-tariff-fee-display">{{ tenant.formatted_monthly_fee }} <span class="fee-period">/ мес</span></div>
                 <div class="hero-tariff-expiry">
                     Оплачено до: <strong>{{ tenant.subscription_expires_at|date:"d.m.Y" }}</strong>
                 </div>
@@ -185,13 +186,76 @@
 
     </div>
 
+    <!-- ========================================== -->
+    <!-- УПРАВЛЕНИЕ ТАРИФОМ ЗАВЕДЕНИЯ (SUPER-ADMIN) -->
+    <!-- ========================================== -->
+    <div class="tier-control-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(197, 160, 89, 0.15); display: flex; align-items: center; justify-content: center;">
+                    <i data-lucide="crown" style="width: 18px; height: 18px; color: #c5a059;"></i>
+                </div>
+                <div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <h3 style="font-size: 1rem; font-weight: 700; color: var(--t1); margin: 0;">Управление тарифным планом</h3>
+                        <span class="badge {{ tenant.tier_badge_class }}" id="current-tier-chip">{{ tenant.tier_label_short }}</span>
+                    </div>
+                    <div style="font-size: 0.78rem; color: var(--t3); margin-top: 2px;">
+                        Переключение тарифа мгновенно обновляет лимиты в боте и сумму ежемесячной абонплаты
+                    </div>
+                </div>
+            </div>
+            <div id="tier-sync-indicator" style="font-size: 0.76rem; color: var(--t3); display: flex; align-items: center; gap: 6px;">
+                <i data-lucide="refresh-cw" style="width: 13px; height: 13px;"></i>
+                <span id="tier-sync-status-text">Синхронизировано с ботом</span>
+            </div>
+        </div>
+
+        <div class="tier-cards-grid">
+            {% for t in tier_config_list %}
+            <div class="tier-card {% if tenant.tier == t.code %}active{% endif %}" 
+                 onclick="selectTenantTier('{{ t.code }}')" 
+                 id="tier-card-{{ t.code }}"
+                 data-tier="{{ t.code }}"
+                 data-fee="{{ t.monthly_fee }}"
+                 data-formatted-fee="{{ t.formatted_fee }}"
+                 data-label="{{ t.label }}"
+                 data-badge-class="{{ t.badge_class }}">
+                {% if t.is_popular %}
+                    <div class="tier-card-badge-popular">{{ t.popular_badge }}</div>
+                {% endif %}
+                <div class="tier-card-header">
+                    <div>
+                        <div class="tier-card-name">{{ t.name }}</div>
+                        <div class="tier-card-sub">{{ t.subtitle }}</div>
+                    </div>
+                    <div class="tier-radio-dot"><span></span></div>
+                </div>
+                <div class="tier-card-price">{{ t.formatted_fee }} <span class="tier-price-period">сум/мес</span></div>
+                <div class="tier-card-features">
+                    {% for feat in t.features %}
+                    <div class="tier-feature-item" {% if not feat.included %}style="color: var(--t3);"{% endif %}>
+                        {% if feat.included %}
+                            <i data-lucide="check" style="width: 13px; height: 13px; color: #10b981;"></i>
+                        {% else %}
+                            <i data-lucide="minus" style="width: 13px; height: 13px;"></i>
+                        {% endif %}
+                        <span>{{ feat.text }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
     <!-- Tab Navigation Menu -->
     <div class="tab-navigation-bar">
-        <button class="tab-btn active" onclick="switchDetailTab('billing')">
+        <button class="tab-btn active" data-tab="billing" onclick="switchDetailTab('billing', this)">
             <i data-lucide="credit-card" style="width: 15px; height: 15px;"></i>
             <span>Биллинг и история оплат ({{ payments.count }})</span>
         </button>
-        <button class="tab-btn" onclick="switchDetailTab('settings')">
+        <button class="tab-btn" data-tab="settings" onclick="switchDetailTab('settings', this)">
             <i data-lucide="settings" style="width: 15px; height: 15px;"></i>
             <span>Настройки заведения и реквизиты</span>
         </button>
@@ -226,7 +290,6 @@
                         <th>Дата транзакции</th>
                         <th>Сумма</th>
                         <th>Период</th>
-                        <th>Способ оплаты</th>
                         <th>Номер чека / Инвойса</th>
                         <th>Комментарий</th>
                         <th>Действие</th>
@@ -238,9 +301,6 @@
                         <td class="table-date">{{ payment.paid_at|date:"d.m.Y H:i" }}</td>
                         <td class="table-amount">+{{ payment.formatted_amount }}</td>
                         <td class="table-period">+{{ payment.days_added }} дн.</td>
-                        <td>
-                            <span class="table-badge-method">{{ payment.payment_method }}</span>
-                        </td>
                         <td class="table-mono">{{ payment.receipt_number|default:"—" }}</td>
                         <td class="table-comment">{{ payment.comment|default:"—" }}</td>
                         <td>
@@ -255,7 +315,7 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="7" class="table-empty">
+                        <td colspan="6" class="table-empty">
                             Транзакций пока не зафиксировано.
                         </td>
                     </tr>
@@ -296,13 +356,24 @@
 
                 <div class="settings-row-2">
                     <div class="form-group">
+                        <label class="form-label">Тарифный план:</label>
+                        <select id="settingTier" class="form-control" onchange="handleSettingTierSelect(this)">
+                            {% for t in tier_config_list %}
+                                <option value="{{ t.code }}" data-fee="{{ t.monthly_fee }}" {% if tenant.tier == t.code %}selected{% endif %}>
+                                    {{ t.name }} — {{ t.formatted_fee }} сум/мес
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label class="form-label">Абонплата в месяц (сум):</label>
                         <input type="number" id="settingFee" class="form-control" value="{{ tenant.monthly_fee }}" required>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Оплачено до (ГГГГ-ММ-ДД):</label>
-                        <input type="date" id="settingExpires" class="form-control" value="{{ tenant.subscription_expires_at|date:'Y-m-d' }}" required>
-                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Оплачено до (ГГГГ-ММ-ДД):</label>
+                    <input type="date" id="settingExpires" class="form-control" value="{{ tenant.subscription_expires_at|date:'Y-m-d' }}" required>
                 </div>
 
                 <div class="form-group">
@@ -359,15 +430,6 @@
                 <div class="form-group">
                     <label class="form-label">Сумма оплаты (сум):</label>
                     <input type="number" id="extendAmount" class="form-control" value="{{ tenant.monthly_fee }}" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Способ оплаты:</label>
-                    <select id="extendMethod" class="form-control">
-                        {% for key, val in method_choices %}
-                            <option value="{{ key }}">{{ val }}</option>
-                        {% endfor %}
-                    </select>
                 </div>
 
                 <div class="form-group">

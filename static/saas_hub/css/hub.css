@@ -754,6 +754,158 @@ body {
     box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
 }
 
+.badge-start {
+    background: rgba(56, 189, 248, 0.1);
+    border-color: rgba(56, 189, 248, 0.3);
+    color: #38bdf8;
+}
+.badge-start::before {
+    background: #38bdf8;
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+}
+
+.badge-pro {
+    background: rgba(197, 160, 89, 0.15);
+    border-color: rgba(197, 160, 89, 0.4);
+    color: #dfbe7e;
+}
+.badge-pro::before {
+    background: #c5a059;
+    box-shadow: 0 0 8px rgba(197, 160, 89, 0.6);
+}
+
+.badge-enterprise {
+    background: rgba(168, 85, 247, 0.15);
+    border-color: rgba(168, 85, 247, 0.4);
+    color: #c084fc;
+}
+.badge-enterprise::before {
+    background: #a855f7;
+    box-shadow: 0 0 8px rgba(168, 85, 247, 0.6);
+}
+
+/* Tier Switcher Controls */
+.tier-control-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+.tier-card {
+    border: 1px solid var(--border);
+    background: var(--bg3);
+    border-radius: 14px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    user-select: none;
+}
+.tier-card:hover {
+    border-color: rgba(197, 160, 89, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+.tier-card.active {
+    border-color: #c5a059;
+    background: rgba(197, 160, 89, 0.08);
+    box-shadow: 0 0 15px rgba(197, 160, 89, 0.15);
+}
+.tier-card.active .tier-radio-dot {
+    border-color: #c5a059;
+}
+.tier-card.active .tier-radio-dot span {
+    background: #c5a059;
+}
+.tier-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+@media (max-width: 900px) {
+    .tier-cards-grid {
+        grid-template-columns: 1fr;
+    }
+}
+.tier-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+.tier-card-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--t1);
+    letter-spacing: -0.01em;
+}
+.tier-card-sub {
+    font-size: 0.72rem;
+    color: var(--t3);
+    margin-top: 2px;
+}
+.tier-radio-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+.tier-radio-dot span {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: transparent;
+    transition: all 0.2s ease;
+}
+.tier-card-price {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #c5a059;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: -0.02em;
+    margin-bottom: 14px;
+}
+.tier-price-period {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--t3);
+}
+.tier-card-features {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    border-top: 1px dashed var(--border);
+    padding-top: 12px;
+}
+.tier-feature-item {
+    font-size: 0.76rem;
+    color: var(--t2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.tier-card-badge-popular {
+    position: absolute;
+    top: -10px;
+    right: 14px;
+    background: linear-gradient(135deg, #c5a059, #dfbe7e);
+    color: #0b0f19;
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    padding: 3px 10px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(197, 160, 89, 0.4);
+    text-transform: uppercase;
+}
+
 /* Subscription Health Strip */
 .sub-health-container {
     background: var(--bg2);

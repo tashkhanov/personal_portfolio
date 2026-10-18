@@ -115,8 +115,8 @@ async function submitExtendForm(e) {
 
     const tenantId = document.getElementById('extendTenantId').value;
     const days = document.getElementById('extendDays').value;
-    const amount = document.getElementById('extendAmount').value;
-    const method = document.getElementById('extendMethod').value;
+    const methodEl = document.getElementById('extendMethod');
+    const method = methodEl ? methodEl.value : 'card_transfer';
     const comment = document.getElementById('extendComment').value;
 
     try {
@@ -152,6 +152,16 @@ async function submitExtendForm(e) {
 }
 
 // Add Tenant Modal
+function handleNewTenantTierChange(selectEl) {
+    if (!selectEl) return;
+    const selectedOpt = selectEl.options[selectEl.selectedIndex];
+    const fee = selectedOpt ? selectedOpt.getAttribute('data-fee') : null;
+    if (fee) {
+        const feeInput = document.getElementById('newTenantFee');
+        if (feeInput) feeInput.value = fee;
+    }
+}
+
 function openAddTenantModal() {
     const modal = document.getElementById('addTenantModal');
     if (modal) modal.classList.add('active');
@@ -173,6 +183,7 @@ async function submitAddTenantForm(e) {
         bot_username: document.getElementById('newTenantBot').value,
         owner_name: document.getElementById('newTenantOwner').value,
         phone: document.getElementById('newTenantPhone').value,
+        tier: document.getElementById('newTenantTier')?.value || 'PRO',
         monthly_fee: document.getElementById('newTenantFee').value,
         api_base_url: document.getElementById('newTenantUrl').value,
         api_secret_token: document.getElementById('newTenantToken').value,

@@ -86,6 +86,7 @@ def hub_dashboard(request):
         'telemetry': telemetry,
         'now': timezone.now(),
         'method_choices': SubscriptionPayment.METHOD_CHOICES,
+        'tier_config_list': Tenant.get_tier_configs(),
     }
     return render(request, 'saas_hub/dashboard.html', context)
 
@@ -109,6 +110,7 @@ def tenant_detail(request, slug):
         'payments': payments,
         'sync_logs': sync_logs,
         'method_choices': SubscriptionPayment.METHOD_CHOICES,
+        'tier_config_list': Tenant.get_tier_configs(),
     }
     return render(request, 'saas_hub/tenant_detail.html', context)
 
@@ -175,8 +177,16 @@ def api_update_tenant_settings(request, slug):
             import datetime
             tenant.subscription_expires_at = datetime.datetime.strptime(expires_str, '%Y-%m-%d').date()
 
+        new_tier = str(data.get('tier', '')).strip().upper()
+        if new_tier in (Tenant.TIER_START, Tenant.TIER_PRO, Tenant.TIER_ENTERPRISE):
+            tenant.set_tier(new_tier, auto_update_fee=False)
+
         tenant.notes = data.get('notes', tenant.notes).strip()
         tenant.save()
+
+        # Синхронизация с ботом при смене настроек
+        TenantApiClient.sync_tenant_subscription(tenant)
+
         return JsonResponse({'status': 'ok'})
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
@@ -211,7 +221,7 @@ def api_extend(request):
         tenant_id = data.get('tenant_id')
         days = int(data.get('days', 30))
         amount = Decimal(str(data.get('amount', 500000)))
-        method = data.get('method', 'click')
+        method = data.get('method') or 'card_transfer'
         comment = data.get('comment', 'Продление через SaaS Hub')
 
         tenant = get_object_or_404(Tenant, id=tenant_id)
@@ -249,7 +259,12 @@ def api_add_tenant(request):
         bot_username = data.get('bot_username', '').strip()
         owner_name = data.get('owner_name', '').strip()
         phone = data.get('phone', '').strip()
-        monthly_fee = Decimal(str(data.get('monthly_fee', 500000)))
+        tier = str(data.get('tier', Tenant.TIER_PRO)).strip().upper()
+        if tier not in (Tenant.TIER_START, Tenant.TIER_PRO, Tenant.TIER_ENTERPRISE):
+            tier = Tenant.TIER_PRO
+
+        default_fee = Tenant.TIER_RATES.get(tier, 1190000)
+        monthly_fee = Decimal(str(data.get('monthly_fee', default_fee)))
         api_base_url = data.get('api_base_url', 'http://127.0.0.1:8080').strip()
         api_secret_token = data.get('api_secret_token', '').strip() or secrets.token_urlsafe(16)
 
@@ -265,6 +280,7 @@ def api_add_tenant(request):
             bot_username=bot_username,
             owner_name=owner_name,
             phone=phone,
+            tier=tier,
             monthly_fee=monthly_fee,
             api_base_url=api_base_url,
             api_secret_token=api_secret_token,
@@ -273,6 +289,42 @@ def api_add_tenant(request):
         )
 
         return JsonResponse({'status': 'ok', 'tenant_id': tenant.id, 'slug': tenant.slug})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+
+@require_POST
+@superuser_required
+def api_set_tenant_tier(request, slug):
+    """
+    AJAX-переключение тарифа заведения (START / PRO / ENTERPRISE) с авто-расчетом цены
+    и моментальной синхронизацией по API с ботом заведения.
+    """
+    tenant = get_object_or_404(Tenant, slug=slug)
+    try:
+        data = json.loads(request.body)
+        new_tier = str(data.get('tier', '')).strip().upper()
+
+        if new_tier not in (Tenant.TIER_START, Tenant.TIER_PRO, Tenant.TIER_ENTERPRISE):
+            return JsonResponse({'status': 'error', 'message': f'Неизвестный тариф: {new_tier}'}, status=400)
+
+        # 1. Обновляем модель в Django
+        tenant.set_tier(new_tier, auto_update_fee=True)
+        tenant.save(update_fields=['tier', 'monthly_fee'])
+
+        # 2. Синхронизируем с удаленным ботом
+        sync_result = TenantApiClient.sync_remote_tier(tenant, new_tier)
+
+        return JsonResponse({
+            'status': 'ok',
+            'tier': tenant.tier,
+            'tier_display': tenant.tier_display,
+            'tier_label_short': tenant.tier_label_short,
+            'tier_badge_class': tenant.tier_badge_class,
+            'monthly_fee': int(tenant.monthly_fee),
+            'formatted_monthly_fee': tenant.formatted_monthly_fee,
+            'remote_sync': sync_result
+        })
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 

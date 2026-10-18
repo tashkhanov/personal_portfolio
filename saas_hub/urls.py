@@ -13,6 +13,7 @@ urlpatterns = [
     path('tenant/<slug:slug>/api/booking-status/', views.api_update_booking_status, name='api_booking_status'),
     path('tenant/<slug:slug>/api/create-booking/', views.api_create_booking, name='api_create_booking'),
     path('tenant/<slug:slug>/api/settings/', views.api_update_tenant_settings, name='api_tenant_settings'),
+    path('tenant/<slug:slug>/api/set-tier/', views.api_set_tenant_tier, name='api_set_tenant_tier'),
     path('api/killswitch/', views.api_killswitch, name='api_killswitch'),
     path('api/extend/', views.api_extend, name='api_extend'),
     path('api/tenants/add/', views.api_add_tenant, name='api_add_tenant'),

@@ -235,7 +235,7 @@
                         </span>
                     </td>
                     <td>+{{ payment.days_added }} дней</td>
-                    <td style="text-transform: uppercase; font-weight: 600; font-size: 0.85rem;">{{ payment.payment_method }}</td>
+                    <td style="font-weight: 600; font-size: 0.82rem; color: #334155;">{{ payment.get_payment_method_display|default:payment.payment_method }}</td>
                     <td style="text-align: right; font-weight: 700; color: #0f172a;">{{ payment.formatted_amount }}</td>
                 </tr>
             </tbody>

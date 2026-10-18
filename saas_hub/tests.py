@@ -59,6 +59,21 @@ class SaasHubModelTests(TestCase):
         self.assertIn("500 000 сум", payment.formatted_amount)
         self.assertEqual(self.tenant.payments.count(), 1)
 
+    def test_tenant_tier_switching_and_rates(self):
+        # Default tier is PRO with 1 190 000 UZS
+        self.tenant.set_tier(Tenant.TIER_START, auto_update_fee=True)
+        self.assertEqual(self.tenant.tier, Tenant.TIER_START)
+        self.assertEqual(int(self.tenant.monthly_fee), 690000)
+        self.assertEqual(self.tenant.tier_label_short, "START")
+        self.assertEqual(self.tenant.tier_badge_class, "badge-start")
+
+        # Enterprise tier with 3 500 000 UZS
+        self.tenant.set_tier(Tenant.TIER_ENTERPRISE, auto_update_fee=True)
+        self.assertEqual(self.tenant.tier, Tenant.TIER_ENTERPRISE)
+        self.assertEqual(int(self.tenant.monthly_fee), 3500000)
+        self.assertEqual(self.tenant.tier_label_short, "ENTERPRISE")
+        self.assertEqual(self.tenant.tier_badge_class, "badge-enterprise")
+
 
 class SaasHubViewAndMiddlewareTests(TestCase):
     def setUp(self):
@@ -155,3 +170,29 @@ class SaasHubViewAndMiddlewareTests(TestCase):
         self.tenant.refresh_from_db()
         self.assertEqual(self.tenant.subscription_expires_at, initial_expiry + timezone.timedelta(days=30))
         self.assertEqual(self.tenant.payments.count(), 1)
+
+    def test_api_set_tenant_tier(self):
+        # Unauthorized access gets redirected
+        resp = self.client.post(
+            f'/saas-hub/tenant/{self.tenant.slug}/api/set-tier/',
+            data=json.dumps({'tier': 'START'}),
+            content_type='application/json'
+        )
+        self.assertEqual(resp.status_code, 302)
+
+        # Superuser switches to START
+        self.client.login(username='admin', password='secretpassword123')
+        resp = self.client.post(
+            f'/saas-hub/tenant/{self.tenant.slug}/api/set-tier/',
+            data=json.dumps({'tier': 'START'}),
+            content_type='application/json'
+        )
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertEqual(data['status'], 'ok')
+        self.assertEqual(data['tier'], 'START')
+        self.assertEqual(data['monthly_fee'], 690000)
+
+        self.tenant.refresh_from_db()
+        self.assertEqual(self.tenant.tier, 'START')
+        self.assertEqual(int(self.tenant.monthly_fee), 690000)

@@ -12,12 +12,71 @@ class Tenant(models.Model):
     STATUS_GRACE = 'GRACE_PERIOD'
     STATUS_LOCKED = 'LOCKED'
 
+    TIER_START = 'START'
+    TIER_PRO = 'PRO'
+    TIER_ENTERPRISE = 'ENTERPRISE'
+    TIER_DETAILS = {
+        TIER_START: {
+            'code': TIER_START,
+            'name': 'START (Solo)',
+            'label': 'START',
+            'subtitle': 'Базовый старт для 1 точки',
+            'monthly_fee': 690000,
+            'formatted_fee': '690 000',
+            'badge_class': 'badge-start',
+            'is_popular': False,
+            'features': [
+                {'text': 'До 5 мастеров', 'included': True},
+                {'text': '1 филиал', 'included': True},
+                {'text': 'Онлайн-запись и Mini App', 'included': True},
+                {'text': 'Без Win-Back и VIP-графиков', 'included': False},
+            ],
+        },
+        TIER_PRO: {
+            'code': TIER_PRO,
+            'name': 'PRO BUSINESS',
+            'label': 'PRO BUSINESS',
+            'subtitle': 'Стандарт для барбершопов',
+            'monthly_fee': 1190000,
+            'formatted_fee': '1 190 000',
+            'badge_class': 'badge-pro',
+            'is_popular': True,
+            'popular_badge': 'ХИТ ПРОДАЖ',
+            'features': [
+                {'text': 'До 15 мастеров', 'included': True},
+                {'text': 'До 3 филиалов', 'included': True},
+                {'text': 'Напоминания за 2ч + Win-Back 45д', 'included': True},
+                {'text': 'VIP-график шефа (Mr. Akmal)', 'included': True},
+            ],
+        },
+        TIER_ENTERPRISE: {
+            'code': TIER_ENTERPRISE,
+            'name': 'ENTERPRISE (VIP / Сеть)',
+            'label': 'ENTERPRISE',
+            'subtitle': 'Премиум сети и франшизы',
+            'monthly_fee': 3500000,
+            'formatted_fee': '3 500 000',
+            'badge_class': 'badge-enterprise',
+            'is_popular': False,
+            'features': [
+                {'text': 'Безлимит мастеров и филиалов', 'included': True},
+                {'text': 'Eskiz SMS шлюз (alphaname)', 'included': True},
+                {'text': 'AI-робот звонков подтверждения', 'included': True},
+                {'text': 'Выделенный SLA и саппорт', 'included': True},
+            ],
+        },
+    }
+
+    TIER_CHOICES = [(code, f"{details['name']} — {details['formatted_fee']} сум/мес") for code, details in TIER_DETAILS.items()]
+    TIER_RATES = {code: details['monthly_fee'] for code, details in TIER_DETAILS.items()}
+
     name = models.CharField(max_length=150, verbose_name="Название заведения")
     slug = models.SlugField(max_length=80, unique=True, verbose_name="Уникальный Slug")
     bot_username = models.CharField(max_length=100, blank=True, default="", verbose_name="Юзернейм бота")
     owner_name = models.CharField(max_length=150, blank=True, default="", verbose_name="Владелец / Управляющий")
     phone = models.CharField(max_length=50, blank=True, default="", verbose_name="Телефон для связи")
-    monthly_fee = models.DecimalField(max_digits=12, decimal_places=0, default=500000, verbose_name="Абонплата в месяц (сум)")
+    tier = models.CharField(max_length=20, choices=TIER_CHOICES, default=TIER_PRO, verbose_name="Тарифный план")
+    monthly_fee = models.DecimalField(max_digits=12, decimal_places=0, default=1190000, verbose_name="Абонплата в месяц (сум)")
     api_base_url = models.URLField(default="http://127.0.0.1:8080", verbose_name="Базовый API URL бота")
     api_secret_token = models.CharField(max_length=255, default="admin123", verbose_name="Мастер-токен супер-админа")
     is_active = models.BooleanField(default=True, verbose_name="Статус рубильника (Kill Switch)")
@@ -77,6 +136,35 @@ class Tenant(models.Model):
     def formatted_monthly_fee(self) -> str:
         return f"{int(self.monthly_fee):,} сум".replace(",", " ")
 
+    @classmethod
+    def get_tier_configs(cls):
+        """Возвращает структурированный список всех тарифных планов платформы."""
+        return list(cls.TIER_DETAILS.values())
+
+    @property
+    def current_tier_config(self) -> dict:
+        return self.TIER_DETAILS.get(self.tier, self.TIER_DETAILS[self.TIER_PRO])
+
+    @property
+    def tier_display(self) -> str:
+        return self.current_tier_config['name']
+
+    @property
+    def tier_label_short(self) -> str:
+        return self.current_tier_config['label']
+
+    @property
+    def tier_badge_class(self) -> str:
+        return self.current_tier_config['badge_class']
+
+    def set_tier(self, new_tier: str, auto_update_fee: bool = True):
+        """Переключение тарифа с автоматическим обновлением абонплаты."""
+        if new_tier in self.TIER_RATES:
+            self.tier = new_tier
+            if auto_update_fee:
+                from decimal import Decimal
+                self.monthly_fee = Decimal(self.TIER_RATES[new_tier])
+
     @property
     def progress_percent(self) -> int:
         if self.days_left <= 0:
@@ -108,6 +196,7 @@ class SubscriptionPayment(models.Model):
     Журнал оплат и транзакций по абонентской плате.
     """
     METHOD_CHOICES = [
+        ('card_transfer', 'Перевод на карту (P2P)'),
         ('click', 'Click'),
         ('payme', 'Payme'),
         ('uzum', 'Uzum Bank'),
@@ -119,7 +208,7 @@ class SubscriptionPayment(models.Model):
     amount = models.DecimalField(max_digits=12, decimal_places=0, verbose_name="Сумма платежа (сум)")
     paid_at = models.DateTimeField(default=timezone.now, verbose_name="Дата и время оплаты")
     days_added = models.PositiveIntegerField(default=30, verbose_name="Добавлено дней")
-    payment_method = models.CharField(max_length=50, choices=METHOD_CHOICES, default='click', verbose_name="Способ оплаты")
+    payment_method = models.CharField(max_length=50, choices=METHOD_CHOICES, default='card_transfer', verbose_name="Способ оплаты")
     receipt_number = models.CharField(max_length=100, blank=True, default="", verbose_name="Номер чека / Инвойса")
     comment = models.CharField(max_length=255, blank=True, default="", verbose_name="Комментарий к платежу")
 

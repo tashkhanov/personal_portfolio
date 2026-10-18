@@ -127,12 +127,37 @@ class TenantApiClient:
         }
         expires_str = tenant.subscription_expires_at.strftime("%Y-%m-%d 23:59:59")
         payload = {
+            "tier": tenant.tier,
             "monthly_fee": int(tenant.monthly_fee),
             "expires_at": expires_str,
             "is_active": 1 if tenant.is_active else 0,
             "name": tenant.name,
             "contact_phone": tenant.phone,
             "contact_name": tenant.owner_name,
+        }
+        try:
+            resp = requests.post(url, headers=headers, json=payload, timeout=3.0)
+            return {"success": resp.status_code == 200, "data": resp.json() if resp.status_code == 200 else resp.text}
+        except requests.exceptions.RequestException as e:
+            return {"success": False, "error": str(e)}
+
+    @staticmethod
+    def sync_remote_tier(tenant: Tenant, tier: str) -> dict:
+        """
+        Отправляет новый тариф в удаленный бот для немедленного обновления квот и возможностей.
+        """
+        url = f"{tenant.api_base_url.rstrip('/')}/api/super/tenants/{tenant.slug}/sync-subscription"
+        headers = {
+            "X-Super-Admin-Token": tenant.api_secret_token,
+            "Content-Type": "application/json",
+            "User-Agent": "AsatkhanovHub/1.0",
+        }
+        expires_str = tenant.subscription_expires_at.strftime("%Y-%m-%d 23:59:59")
+        payload = {
+            "tier": tier,
+            "monthly_fee": int(tenant.monthly_fee),
+            "expires_at": expires_str,
+            "is_active": 1 if tenant.is_active else 0,
         }
         try:
             resp = requests.post(url, headers=headers, json=payload, timeout=3.0)
